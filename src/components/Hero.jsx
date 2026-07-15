@@ -31,7 +31,7 @@ const duo3 = new URL("../assets/duo3.jpeg", import.meta.url).href;
 const duo4 = new URL("../assets/duo4.jpeg", import.meta.url).href;
 
 const sliderPhotos = [adnan3, adnan4, adnan11, heroPhoto, duo1, duo2, duo3, duo4];
-const gallery = [duo1, duo3, duo2, adnan4];
+const gallery = [duo1, adnan1, duo3, duo2, adnan4];
 
 export default function Hero() {
   useEffect(() => {
