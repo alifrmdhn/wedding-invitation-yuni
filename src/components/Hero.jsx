@@ -152,7 +152,7 @@ function IntroSection() {
           Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.
         </p>
         <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7d1825]">
-          — Ar-Rum · Ayat 21 —
+          —Ar-Rum · Ayat 21—
         </p>
       </div>
       <div className="my-6 h-px w-24 mx-auto bg-gradient-to-r from-transparent via-[#b68a46]/40 to-transparent" />
