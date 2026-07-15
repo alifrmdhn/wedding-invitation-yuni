@@ -125,7 +125,7 @@ function HeroSection() {
           Adnan & Nuraisyah
         </h1>
         <p className="mx-auto mt-8 max-w-[460px] text-base leading-8 text-[#5f5147]">
-          Dengan memohon rahmat dan ridho Allah SWT, kami mengundang
+          Dengan memohon rahmat dan ridho Allah Subhanahu Wa Ta'ala., kami mengundang
           Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada acara pernikahan kami.
         </p>
 
