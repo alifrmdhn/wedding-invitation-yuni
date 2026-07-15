@@ -1,0 +1,418 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap");
+@import "tailwindcss";
+
+:root {
+  color: #efe4d3;
+  background: #241619;
+  font-family: "Inter", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --gold: #b68a46;
+  --gold-soft: #d0ad6a;
+  --paper: #ede2d4;
+  --paper-soft: #f6efe6;
+  --ink: #2d2020;
+  --maroon: #5d1721;
+  --black-soft: #1d1718;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    linear-gradient(90deg, #211618 0%, #4b1620 45%, #211618 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.serif {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+.script {
+  font-family: "Great Vibes", cursive;
+}
+
+.cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(36, 22, 25, 0.85) 0%, rgba(36, 22, 25, 0.4) 40%, rgba(36, 22, 25, 0.6) 100%);
+  z-index: 1;
+}
+
+.arch-photo {
+  width: clamp(200px, 50vw, 260px);
+  height: clamp(260px, 66vw, 340px);
+  border-radius: 999px 999px 0 0;
+  overflow: hidden;
+  border: 5px solid rgba(255, 250, 242, 0.9);
+  box-shadow: 0 18px 40px rgba(30, 18, 18, 0.25);
+  position: relative;
+}
+
+.arch-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.event-card-first {
+  border-radius: 20px 20px 10px 10px;
+}
+
+.event-card-mid {
+  border-radius: 10px;
+}
+
+.event-card-last {
+  border-radius: 10px 10px 20px 20px;
+}
+
+.closing-bg {
+  position: relative;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.closing-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(36, 22, 25, 0.82) 0%, rgba(36, 22, 25, 0.55) 50%, rgba(36, 22, 25, 0.7) 100%);
+  z-index: 1;
+}
+
+.page-frame {
+  position: relative;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(182, 138, 70, 0.1), transparent 18rem),
+    radial-gradient(circle at 90% 26%, rgba(93, 23, 33, 0.13), transparent 16rem),
+    linear-gradient(135deg, rgba(246, 239, 230, 0.92), rgba(232, 217, 200, 0.94)),
+    #ede2d4;
+  box-shadow: 0 0 46px rgba(0, 0, 0, 0.28);
+}
+
+.page-frame::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  pointer-events: none;
+  opacity: 0.34;
+  background-image:
+    radial-gradient(circle at 22% 16%, rgba(0, 0, 0, 0.13) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 30%, rgba(93, 23, 33, 0.12) 0 1px, transparent 2px),
+    radial-gradient(circle at 44% 58%, rgba(182, 138, 70, 0.12) 0 1px, transparent 2px);
+  background-size: 120px 150px, 180px 170px, 150px 190px;
+  mix-blend-mode: multiply;
+}
+
+.section-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 620px);
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.marble-section {
+  position: relative;
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(154, 122, 59, 0.05) 34% 35%, transparent 35%),
+    radial-gradient(circle at 18% 10%, rgba(93, 23, 33, 0.12), transparent 11rem),
+    radial-gradient(circle at 85% 28%, rgba(25, 18, 18, 0.08), transparent 12rem),
+    rgba(246, 239, 230, 0.76);
+}
+
+.card-soft {
+  border: 1px solid rgba(93, 23, 33, 0.22);
+  border-radius: 10px;
+  background: rgba(246, 239, 230, 0.88);
+  box-shadow: 0 18px 46px rgba(30, 18, 18, 0.18);
+}
+
+.card-soft {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-soft::before {
+  content: "";
+  position: absolute;
+  inset: -40% auto auto -20%;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(182, 138, 70, 0.14), transparent 68%);
+  pointer-events: none;
+}
+
+.card-soft > * {
+  position: relative;
+  z-index: 1;
+}
+
+.gold-divider {
+  height: 1px;
+  width: 126px;
+  margin: 22px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.arch-frame {
+  border: 4px solid rgba(93, 23, 33, 0.78);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+}
+
+.leaf-corner {
+  pointer-events: none;
+  position: absolute;
+  width: 230px;
+  opacity: 0.2;
+  filter: sepia(0.2);
+}
+
+.top-ornament-wrap {
+  position: relative;
+  height: 74px;
+  width: min(100%, 430px);
+  margin: 0 auto 8px;
+  overflow: hidden;
+}
+
+.top-ornament {
+  position: absolute;
+  left: 43%;
+  top: 50%;
+  width: 500px;
+  max-width: none;
+  transform: translate(-50%, -52%);
+  filter: saturate(0.9) contrast(1.1);
+  opacity: 0.9;
+  pointer-events: none;
+  user-select: none;
+}
+
+.photo-frame {
+  position: relative;
+  margin-inline: auto;
+}
+
+.photo-frame::before {
+  content: "";
+  position: absolute;
+  inset: -34%;
+  z-index: 2;
+  pointer-events: none;
+  background-image: var(--frame-image);
+  background-repeat: no-repeat;
+  background-size: 220% auto;
+  background-position: 43% 48%;
+  opacity: 0.9;
+  filter: saturate(0.95) contrast(1.03);
+}
+
+.photo-frame > img {
+  position: relative;
+  z-index: 1;
+}
+
+.wreath-photo {
+  --photo-size: clamp(250px, 56vw, 320px);
+  position: relative;
+  width: var(--photo-size);
+  height: var(--photo-size);
+  margin-inline: auto;
+}
+
+.wreath-photo__frame {
+  position: absolute;
+  left: 50.50%;
+  top: 47%;
+  z-index: 1;
+  pointer-events: none;
+  width: calc(var(--photo-size) * 2.79);
+  max-width: none;
+  transform: translate(-39.2%, -50%);
+  filter: saturate(1.02) contrast(1.02);
+  user-select: none;
+}
+
+.wreath-photo__inner {
+  position: absolute;
+  inset: 7%;
+  z-index: 2;
+  overflow: hidden;
+  border: 12px solid rgba(255, 250, 242, 0.96);
+  border-radius: 999px;
+  background: #111;
+  box-shadow: 0 22px 48px rgba(30, 18, 18, 0.22);
+}
+
+.wreath-photo__inner::before {
+  content: "";
+  position: absolute;
+  inset: -24px;
+  border: 12px solid rgba(182, 138, 70, 0.28);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.wreath-photo--profile {
+  --photo-size: clamp(190px, 52vw, 250px);
+}
+
+.wreath-photo--cover {
+  --photo-size: clamp(245px, 54vw, 340px);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+  will-change: opacity, transform;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-card {
+  opacity: 0;
+  transform: translateY(40px) scale(0.96);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+  will-change: opacity, transform;
+}
+.reveal-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.reveal-photo {
+  opacity: 0;
+  transform: translateY(30px) scale(0.94);
+  transition: opacity 0.55s ease-out, transform 0.55s ease-out;
+  will-change: opacity, transform;
+}
+.reveal-photo.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.petal {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  will-change: transform, opacity;
+  animation: petalFall var(--dur) var(--delay) ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes petalFall {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3);
+  }
+}
+
+@keyframes scrollBounce {
+  0%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(8px);
+  }
+}
+
+.slider-wrap {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.slider-track {
+  display: flex;
+  width: max-content;
+  animation: slideScroll 20s linear infinite;
+}
+
+.slider-track:hover {
+  animation-play-state: paused;
+}
+
+.slider-track img {
+  height: 180px;
+  width: auto;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 6px;
+  box-shadow: 0 6px 18px rgba(30, 18, 18, 0.18);
+}
+.slider-track img.slider-landscape {
+  width: 300px;
+  height: 180px;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+@keyframes slideScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.quran-verse {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 18px;
+  line-height: 2;
+  color: #4d4038;
+  text-align: center;
+  font-style: italic;
+}
