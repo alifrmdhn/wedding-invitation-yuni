@@ -22,16 +22,23 @@ const groomPhoto = new URL("../assets/cowo1.jpeg", import.meta.url).href;
 const bridePhoto = new URL("../assets/cewe1.jpeg", import.meta.url).href;
 
 const adnan1 = new URL("../assets/adnan1.jpeg", import.meta.url).href;
+const adnan2 = new URL("../assets/adnan2.jpeg", import.meta.url).href;
 const adnan3 = new URL("../assets/adnan3.jpeg", import.meta.url).href;
 const adnan4 = new URL("../assets/adnan4.jpeg", import.meta.url).href;
+const adnan5 = new URL("../assets/adnan5.jpeg", import.meta.url).href;
+const adnan6 = new URL("../assets/adnan6.jpeg", import.meta.url).href;
+const adnan7 = new URL("../assets/adnan7.jpeg", import.meta.url).href;
+const adnan8 = new URL("../assets/adnan8.jpeg", import.meta.url).href;
+const adnan9 = new URL("../assets/adnan9.jpeg", import.meta.url).href;
+const adnan10 = new URL("../assets/adnan10.jpeg", import.meta.url).href;
 const adnan11 = new URL("../assets/adnan11.jpeg", import.meta.url).href;
 const duo1 = new URL("../assets/duo1.jpeg", import.meta.url).href;
 const duo2 = new URL("../assets/duo2.jpeg", import.meta.url).href;
 const duo3 = new URL("../assets/duo3.jpeg", import.meta.url).href;
 const duo4 = new URL("../assets/duo4.jpeg", import.meta.url).href;
 
-const sliderPhotos = [adnan3, adnan4, adnan11, heroPhoto, duo1, duo2, duo3, duo4];
-const gallery = [duo1, adnan1, duo3, duo2, adnan4];
+const sliderPhotos = [adnan1, adnan2, adnan3, adnan4, adnan5, adnan6, adnan7, adnan8, adnan9, adnan10, adnan11, heroPhoto, duo1, duo2, duo3, duo4];
+const gallery = [duo1, duo2, duo3, duo4, adnan1];
 
 export default function Hero() {
   useEffect(() => {
@@ -53,12 +60,16 @@ export default function Hero() {
 
       prevTime = now;
 
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+      );
       const reachedBottom =
-        window.innerHeight + window.scrollY >= document.body.scrollHeight - 8;
+        window.innerHeight + window.scrollY >= docHeight - 8;
 
       if (reachedBottom) return;
 
-      window.scrollBy({ top: (speed * delta) / 1000 });
+      window.scrollBy(0, Math.max(1, Math.round((speed * delta) / 1000)));
       rafId = requestAnimationFrame(tick);
     };
 
@@ -170,23 +181,12 @@ function IntroSection() {
 
 function PhotoSlider() {
   const doubled = [...sliderPhotos, ...sliderPhotos];
-
   return (
     <div className="slider-wrap rounded-lg">
       <div className="slider-track">
-        {doubled.map((img, i) => {
-          const isDuo = [duo1, duo2, duo3, duo4].includes(img);
-
-          return (
-            <img
-              key={i}
-              src={img}
-              alt=""
-              loading="lazy"
-              className={isDuo ? "slider-landscape" : ""}
-            />
-          );
-        })}
+        {doubled.map((img, i) => (
+          <img key={i} src={img} alt="" loading="lazy" />
+        ))}
       </div>
     </div>
   );
@@ -307,6 +307,9 @@ function EventSection() {
           address="Pulau Barrang Lompo, Makassar"
           variant="first"
         />
+        <div className="bg-[#5d1721] px-6 py-3 text-center text-sm font-semibold text-white">
+          Adnan & Nuraisyah
+        </div>
         {/* <EventCard
           title="Resepsi"
           time="13.00 WITA - Selesai"
@@ -338,15 +341,14 @@ function EventCard({ title, time, place, address, variant = "mid" }) {
         <p className="text-sm leading-7 text-[#5f5147]">{address}</p>
       </div>
       <a
-  href="https://maps.app.goo.gl/cCeryCAqiWbwadG6A"
-  target="_blank"
-  rel="noreferrer"
-  className="mt-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#5d1721] px-5 py-3 text-sm font-semibold shadow-[0_6px_18px_rgba(93,23,33,0.3)] transition hover:bg-[#2d2020]"
-  style={{ color: "#fff" }}
->
-  <FaMapLocationDot style={{ color: "#fff" }} />
-  <span style={{ color: "#fff" }}>Buka Maps</span>
-</a>
+        href="https://maps.app.goo.gl/cCeryCAqiWbwadG6A"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#5d1721] px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(93,23,33,0.3)] transition hover:bg-[#2d2020]"
+      >
+        <FaMapLocationDot aria-hidden="true" />
+        Buka Maps
+      </a>
     </article>
   );
 }
