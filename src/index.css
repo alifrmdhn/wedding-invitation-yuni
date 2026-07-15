@@ -369,6 +369,9 @@ a {
 .slider-wrap {
   overflow: hidden;
   width: 100%;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
   mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
@@ -376,6 +379,8 @@ a {
 .slider-track {
   display: flex;
   width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
   animation: slideScroll 20s linear infinite;
 }
 

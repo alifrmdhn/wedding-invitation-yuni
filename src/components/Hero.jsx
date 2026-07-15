@@ -25,20 +25,14 @@ const adnan1 = new URL("../assets/adnan1.jpeg", import.meta.url).href;
 const adnan2 = new URL("../assets/adnan2.jpeg", import.meta.url).href;
 const adnan3 = new URL("../assets/adnan3.jpeg", import.meta.url).href;
 const adnan4 = new URL("../assets/adnan4.jpeg", import.meta.url).href;
-const adnan5 = new URL("../assets/adnan5.jpeg", import.meta.url).href;
-const adnan6 = new URL("../assets/adnan6.jpeg", import.meta.url).href;
-const adnan7 = new URL("../assets/adnan7.jpeg", import.meta.url).href;
-const adnan8 = new URL("../assets/adnan8.jpeg", import.meta.url).href;
-const adnan9 = new URL("../assets/adnan9.jpeg", import.meta.url).href;
-const adnan10 = new URL("../assets/adnan10.jpeg", import.meta.url).href;
 const adnan11 = new URL("../assets/adnan11.jpeg", import.meta.url).href;
 const duo1 = new URL("../assets/duo1.jpeg", import.meta.url).href;
 const duo2 = new URL("../assets/duo2.jpeg", import.meta.url).href;
 const duo3 = new URL("../assets/duo3.jpeg", import.meta.url).href;
 const duo4 = new URL("../assets/duo4.jpeg", import.meta.url).href;
 
-const sliderPhotos = [adnan1, adnan2, adnan3, adnan4, adnan5, adnan6, adnan7, adnan8, adnan9, adnan10, adnan11, heroPhoto, duo1, duo2, duo3, duo4];
-const gallery = [duo1, duo2, duo3, duo4, adnan1];
+const sliderPhotos = [adnan3, adnan4, adnan11, heroPhoto, duo1, duo2, duo3, duo4];
+const gallery = [duo1, adnan4, duo2, duo3, adnan1];
 
 export default function Hero() {
   useEffect(() => {
@@ -169,7 +163,7 @@ function IntroSection() {
         <h2 className="serif mt-3 text-5xl font-bold text-[#2d2020]">01 Agustus 2026</h2>
         <div className="gold-divider" />
         <p className="leading-8 text-[#5f5147]">
-          Sabtu, pukul 09.00 WITA sampai selesai.
+          Sabtu, pukul 13.00 WITA sampai selesai.
         </p>
         <Countdown />
         <SaveCalendarButton />
@@ -185,7 +179,7 @@ function PhotoSlider() {
     <div className="slider-wrap rounded-lg">
       <div className="slider-track">
         {doubled.map((img, i) => (
-          <img key={i} src={img} alt="" loading="lazy" />
+          <img key={i} src={img} alt="" />
         ))}
       </div>
     </div>
@@ -307,9 +301,7 @@ function EventSection() {
           address="Pulau Barrang Lompo, Makassar"
           variant="first"
         />
-        <div className="bg-[#5d1721] px-6 py-3 text-center text-sm font-semibold text-white">
-          Adnan & Nuraisyah
-        </div>
+      
         {/* <EventCard
           title="Resepsi"
           time="13.00 WITA - Selesai"
@@ -341,14 +333,14 @@ function EventCard({ title, time, place, address, variant = "mid" }) {
         <p className="text-sm leading-7 text-[#5f5147]">{address}</p>
       </div>
       <a
-        href="https://maps.app.goo.gl/cCeryCAqiWbwadG6A"
-        target="_blank"
-        rel="noreferrer"
-        className="mt-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#5d1721] px-5 py-3 text-sm font-semibold text-white shadow-[0_6px_18px_rgba(93,23,33,0.3)] transition hover:bg-[#2d2020]"
-      >
-        <FaMapLocationDot aria-hidden="true" />
-        Buka Maps
-      </a>
+  href="https://maps.app.goo.gl/cCeryCAqiWbwadG6A"
+  target="_blank"
+  rel="noreferrer"
+  className="mt-7 inline-flex items-center justify-center gap-2 rounded-md bg-[#5d1721] px-5 py-3 text-sm font-semibold !text-white shadow-[0_6px_18px_rgba(93,23,33,0.3)] transition hover:bg-[#2d2020] hover:!text-white"
+>
+  <FaMapLocationDot className="text-white" />
+  <span className="text-white">Buka Maps</span>
+</a>
     </article>
   );
 }
