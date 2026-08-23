@@ -2,63 +2,186 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FaEnvelopeOpenText } from "react-icons/fa6";
 
-const coverPhoto = new URL("../assets/adnan12.jpeg", import.meta.url).href;
+const coverPhoto = new URL(
+  "../assets/foto sampul.png",
+  import.meta.url
+).href;
+
+const heroBackground = new URL(
+  "../assets/bg merah.png",
+  import.meta.url
+).href;
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 22,
+  },
+
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: "easeOut",
+    },
+  },
+};
 
 export default function Opening({ onOpen }) {
   const [guest] = useState(() => {
     const params = new URLSearchParams(window.location.search);
+
     const to = params.get("to") || params.get("kpd");
 
     if (to) {
-      return decodeURIComponent(to.replace(/\+/g, " "));
+      return decodeURIComponent(
+        to.replace(/\+/g, " ")
+      );
     }
 
     return "Tamu Undangan";
   });
 
+  const handleOpenInvitation = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+
+    onOpen();
+  };
+
   return (
-    <section className="relative min-h-screen overflow-hidden text-white">
-      <img
-        src={coverPhoto}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover object-top"
+    <section
+      className="opening-section"
+      style={{
+        "--opening-bg": `url("${heroBackground}")`,
+      }}
+    >
+      <motion.div
+        className="opening-background"
+        initial={{
+          opacity: 0,
+          scale: 1.08,
+        }}
+        animate={{
+          opacity: 1,
+          scale: 1.02,
+        }}
+        transition={{
+          duration: 1.2,
+          ease: "easeOut",
+        }}
       />
-      <div className="cover-overlay" />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-10 text-center">
+      <div className="opening-inner">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full max-w-[520px]"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="opening-content"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.5em] text-white/70">
-            The Wedding Of
-          </p>
+          <motion.p
+            variants={itemVariants}
+            className="opening-kicker"
+          >
+            the wedding of
+          </motion.p>
 
-          <h1 className="script mt-4 text-6xl font-normal leading-tight text-white sm:text-7xl">
-            Adnan & Nuraisyah
-          </h1>
+          <motion.h1
+            variants={itemVariants}
+            className="opening-title"
+          >
+            Yuni &amp; Ardian
+          </motion.h1>
 
-          <div className="mx-auto mt-8 h-px w-24 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+          <motion.div
+            variants={itemVariants}
+            className="opening-gold-divider"
+          />
 
-          <p className="mt-6 text-sm leading-6 text-white/70">
-            Tanpa mengurangi rasa hormat, kami mengundang Bapak/Ibu/Saudara/i
-            untuk hadir di acara kami.
-          </p>
+          <motion.p
+            variants={itemVariants}
+            className="opening-description"
+          >
+            Tanpa mengurangi rasa hormat, kami mengundang
+            <br />
+            Bapak/Ibu/Saudara/i untuk hadir di acara kami.
+          </motion.p>
 
-          <div className="mx-auto mt-8 max-w-[340px] rounded-xl border border-white/15 bg-black/25 px-6 py-6 backdrop-blur-md">
-            <p className="text-xs text-white/60">Kepada</p>
-            <h3 className="serif mt-1 text-2xl font-bold text-white">{guest}</h3>
+          <motion.div
+            variants={itemVariants}
+            className="opening-polaroid"
+          >
+            <div className="opening-polaroid-photo">
+              <img
+                src={coverPhoto}
+                alt="Yuni dan Ardian"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
 
-            <button
-              onClick={onOpen}
-              className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-md bg-[#5d1721] px-6 py-4 text-base font-semibold text-white shadow-[0_12px_24px_rgba(0,0,0,0.3)] transition hover:bg-[#2d2020]"
+            <div className="opening-polaroid-caption">
+              <p>
+                Wahyuni, A.Md.Kep.
+              </p>
+
+              <span>
+                DENGAN
+              </span>
+
+              <p>
+                Briptu Ardian Syaputra, S.H.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={itemVariants}
+            className="opening-guest-card"
+          >
+            <p className="opening-guest-label">
+              Kepada Yth.
+            </p>
+
+            <h3 className="opening-guest-name">
+              {guest}
+            </h3>
+
+            <motion.button
+              type="button"
+              onClick={handleOpenInvitation}
+              className="opening-button"
+              whileTap={{
+                scale: 0.97,
+              }}
+              transition={{
+                duration: 0.15,
+              }}
             >
-              <FaEnvelopeOpenText aria-hidden="true" />
-              Buka Undangan
-            </button>
-          </div>
+              <FaEnvelopeOpenText
+                aria-hidden="true"
+              />
+
+              <span>
+                Buka Undangan
+              </span>
+            </motion.button>
+          </motion.div>
         </motion.div>
       </div>
     </section>
