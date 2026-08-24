@@ -1773,7 +1773,8 @@ function BottomNav() {
         bottom: "10px",
         width: "calc(100% - 18px)",
         maxWidth: "370px",
-        transform: "translateX(-50%)",
+        transform: "translate3d(-50%, 0, 0)",
+        willChange: "transform",
 
         padding: "6px",
 
@@ -1784,11 +1785,6 @@ function BottomNav() {
 
         background:
           "linear-gradient(135deg, rgba(255,255,255,0.58), rgba(255,248,250,0.48))",
-
-        backdropFilter:
-          "blur(12px) saturate(125%)",
-        WebkitBackdropFilter:
-          "blur(12px) saturate(125%)",
 
         boxShadow:
           "0 10px 28px rgba(0,0,0,0.14), 0 2px 8px rgba(176,0,58,0.08), inset 0 1px 0 rgba(255,255,255,0.70)",
