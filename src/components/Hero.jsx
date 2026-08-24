@@ -117,10 +117,10 @@ export default function Hero() {
 
   useEffect(() => {
     let rafId = null;
-    let lastTime = performance.now();
     let stopped = false;
 
     const speed = 175;
+    const durationPerFrame = 1000 / 60;
 
     const stop = () => {
       if (stopped) return;
@@ -132,31 +132,40 @@ export default function Hero() {
       }
     };
 
-    const tick = (now) => {
+    const tick = () => {
       if (stopped) return;
-
-      const delta = Math.min(now - lastTime, 32);
-      lastTime = now;
 
       const maxScroll =
         document.documentElement.scrollHeight -
         window.innerHeight;
 
-      const nextScroll =
-        window.scrollY + (speed * delta) / 1000;
+      const currentScroll = window.scrollY;
 
-      if (nextScroll >= maxScroll) {
-        window.scrollTo(0, maxScroll);
+      if (currentScroll >= maxScroll - 1) {
+        window.scrollTo({
+          top: maxScroll,
+          behavior: "auto",
+        });
         stop();
         return;
       }
 
-      window.scrollTo(0, nextScroll);
+      const nextScroll = Math.min(
+        currentScroll + (speed * durationPerFrame) / 1000,
+        maxScroll
+      );
+
+      window.scrollTo({
+        top: nextScroll,
+        behavior: "auto",
+      });
 
       rafId = requestAnimationFrame(tick);
     };
 
-    rafId = requestAnimationFrame(tick);
+    const startTimer = window.setTimeout(() => {
+      rafId = requestAnimationFrame(tick);
+    }, 50);
 
     window.addEventListener("wheel", stop, {
       passive: true,
@@ -179,6 +188,7 @@ export default function Hero() {
     window.addEventListener("keydown", stop);
 
     return () => {
+      window.clearTimeout(startTimer);
       stop();
 
       window.removeEventListener("wheel", stop);
