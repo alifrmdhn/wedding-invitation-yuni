@@ -285,6 +285,7 @@ export default function Hero() {
           <img
             src={heroPhoto}
             alt="Yuni dan Ardian"
+            decoding="async"
             style={{
               display: "block",
               width: "100%",
@@ -470,6 +471,7 @@ export default function Hero() {
           <img
             src={secondPhoto}
             alt="Yuni dan Ardian"
+            decoding="async"
             style={{
               position: "relative",
 
@@ -1592,6 +1594,8 @@ function GallerySection({
         paddingBottom: "80px",
         textAlign: "center",
         overflow: "visible",
+        contentVisibility: "auto",
+        contain: "layout paint",
         ...(light
           ? {
               background: "transparent",
@@ -1635,6 +1639,7 @@ function GallerySection({
           flexDirection: "column",
           alignItems: "center",
           boxSizing: "border-box",
+          contain: "layout paint",
         }}
       >
         <div
@@ -1694,6 +1699,7 @@ function GallerySection({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                contain: "layout paint",
               }}
             >
               <img
