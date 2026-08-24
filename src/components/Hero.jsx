@@ -117,8 +117,8 @@ export default function Hero() {
   useEffect(() => {
     let rafId = null;
     let stopped = false;
-    let lastTime = null;
     let scrollPosition = window.scrollY;
+    let lastTime = performance.now();
 
     const speed = 175;
 
@@ -135,44 +135,36 @@ export default function Hero() {
     const tick = (now) => {
       if (stopped) return;
 
-      if (lastTime === null) {
-        lastTime = now;
-      }
+      const elapsed = Math.min(
+        Math.max(now - lastTime, 0),
+        20
+      );
 
-      const elapsed = Math.min(now - lastTime, 34);
       lastTime = now;
 
       const maxScroll =
         document.documentElement.scrollHeight -
         window.innerHeight;
 
-      if (scrollPosition >= maxScroll - 0.5) {
-        window.scrollTo({
-          top: maxScroll,
-          behavior: "auto",
-        });
-
+      if (scrollPosition >= maxScroll) {
+        window.scrollTo(0, maxScroll);
         stop();
         return;
       }
 
-      const distance = (speed * elapsed) / 1000;
-
       scrollPosition = Math.min(
-        scrollPosition + distance,
+        scrollPosition + (speed * elapsed) / 1000,
         maxScroll
       );
 
-      window.scrollTo({
-        top: scrollPosition,
-        behavior: "auto",
-      });
+      window.scrollTo(0, scrollPosition);
 
       rafId = requestAnimationFrame(tick);
     };
 
     const startTimer = window.setTimeout(() => {
       scrollPosition = window.scrollY;
+      lastTime = performance.now();
       rafId = requestAnimationFrame(tick);
     }, 100);
 
