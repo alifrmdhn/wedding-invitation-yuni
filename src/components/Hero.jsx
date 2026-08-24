@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaHouseChimney,
@@ -72,66 +72,44 @@ const framePhoto3 = new URL(
   import.meta.url
 ).href;
 
-const RED_INTRO_PADDING_TOP = "175px"; 
+const RED_INTRO_PADDING_TOP = "90px"; 
 const RED_INTRO_CONTENT_OFFSET_Y = "0px";
 const YEAR_SECTION_PADDING_TOP = "65px"; 
 const WEDDING_GIFT_PADDING_TOP = "70px";
 
-const sectionVariants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
+const sectionMotion = {};
+const fadeInMotion = {};
+const photoMotion = {};
 
-const fadeInVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 1,
-      ease: "easeOut",
-    },
-  },
-};
+function useScrollFadeIn() {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
-const photoVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      duration: 1.6,
-      ease: "easeOut",
-    },
-  },
-};
+  useEffect(() => {
+    const element = ref.current;
 
-const sectionMotion = {
-  variants: sectionVariants,
-  initial: "hidden",
-  whileInView: "visible",
-  viewport: { once: true, amount: 0.08 },
-};
+    if (!element) return;
 
-const fadeInMotion = {
-  variants: fadeInVariants,
-  initial: "hidden",
-  whileInView: "visible",
-  viewport: { once: true, amount: 0.12 },
-};
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(element);
+        }
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -8% 0px",
+      }
+    );
 
-const photoMotion = {
-  variants: photoVariants,
-  initial: "hidden",
-  whileInView: "visible",
-  viewport: { once: true, amount: 0.15 },
-};
- 
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, visible];
+}
 
 const gallery1Photos = [
   new URL("../assets/gal1.jpeg", import.meta.url).href,
@@ -167,96 +145,53 @@ const briArdian = new URL(
 export default function Hero() {
   const [copiedAccount, setCopiedAccount] = useState("");
 
-  useEffect(() => {
-    const sections = document.querySelectorAll(
-      ".scroll-reveal-section"
-    );
-
-    if (!sections.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.12,
-        rootMargin: "0px 0px -40px 0px",
-      }
-    );
-
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const [heroPhotoRef, heroPhotoVisible] = useScrollFadeIn();
+  const [secondPhotoRef, secondPhotoVisible] = useScrollFadeIn();
+  const [bridePhotoRef, bridePhotoVisible] = useScrollFadeIn();
+  const [groomPhotoRef, groomPhotoVisible] = useScrollFadeIn();
 
   useEffect(() => {
-    let rafId;
-    let prevTime = null;
+    let rafId = null;
+    let lastTime = performance.now();
     let stopped = false;
 
-    const speed = 160;
-
-    const tick = (now) => {
-      if (stopped) return;
-
-      if (prevTime === null) {
-        prevTime = now;
-      }
-
-      const delta = now - prevTime;
-
-      if (delta > 200) {
-        prevTime = now;
-        rafId = requestAnimationFrame(tick);
-        return;
-      }
-
-      prevTime = now;
-
-      const docHeight = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight
-      );
-
-      const reachedBottom =
-        window.innerHeight + window.scrollY >=
-        docHeight - 8;
-
-      if (reachedBottom) {
-        stopped = true;
-        cancelAnimationFrame(rafId);
-        return;
-      }
-
-      window.scrollBy(
-        0,
-        Math.max(
-          1,
-          Math.round((speed * delta) / 1000)
-        )
-      );
-
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
+    const speed = 150;
 
     const stop = () => {
       if (stopped) return;
 
       stopped = true;
-      cancelAnimationFrame(rafId);
+
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
     };
+
+    const tick = (now) => {
+      if (stopped) return;
+
+      const delta = Math.min(now - lastTime, 32);
+      lastTime = now;
+
+      const maxScroll =
+        document.documentElement.scrollHeight -
+        window.innerHeight;
+
+      const nextScroll =
+        window.scrollY + (speed * delta) / 1000;
+
+      if (nextScroll >= maxScroll) {
+        window.scrollTo(0, maxScroll);
+        stop();
+        return;
+      }
+
+      window.scrollTo(0, nextScroll);
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
 
     window.addEventListener("wheel", stop, {
       passive: true,
@@ -274,39 +209,19 @@ export default function Hero() {
       passive: true,
     });
 
-    window.addEventListener("keydown", stop);
-
     window.addEventListener("mousedown", stop);
 
-    const onVisibility = () => {
-      if (!stopped) {
-        prevTime = null;
-      }
-    };
-
-    document.addEventListener(
-      "visibilitychange",
-      onVisibility
-    );
+    window.addEventListener("keydown", stop);
 
     return () => {
-      stopped = true;
-
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+      stop();
 
       window.removeEventListener("wheel", stop);
       window.removeEventListener("touchstart", stop);
       window.removeEventListener("touchmove", stop);
       window.removeEventListener("pointerdown", stop);
-      window.removeEventListener("keydown", stop);
       window.removeEventListener("mousedown", stop);
-
-      document.removeEventListener(
-        "visibilitychange",
-        onVisibility
-      );
+      window.removeEventListener("keydown", stop);
     };
   }, []);
 
@@ -321,10 +236,9 @@ export default function Hero() {
       }}
     >
 
-      <motion.div
+      <div
         id="home"
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           width: "100%",
@@ -341,8 +255,7 @@ export default function Hero() {
         }}
       >
 
-        <motion.img
-              {...photoMotion}
+        <img
           src={white2Background}
           alt=""
           aria-hidden="true"
@@ -380,26 +293,29 @@ export default function Hero() {
             position: "relative",
             zIndex: 1,
             width: "90%",
+            maxWidth: "340px",
             background: "#fff",
             border: "1.5px solid #333",
             padding: "5px",
             boxSizing: "border-box",
 
-            transform: "scale(1.25)",
+            transform: "none",
             transformOrigin: "top center",
 
             marginTop: "-10px",
-            marginBottom: "-95px",
+            marginBottom: "0px",
           }}
         >
-          <motion.img
-              {...photoMotion}
+          <img
+            ref={heroPhotoRef}
             src={heroPhoto}
             alt="Yuni dan Ardian"
             style={{
               display: "block",
               width: "100%",
               height: "auto",
+              opacity: heroPhotoVisible ? 1 : 0,
+              transition: "opacity 2s ease-out",
             }}
           />
 
@@ -448,11 +364,10 @@ export default function Hero() {
             </p>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           width: "100%",
@@ -469,8 +384,7 @@ export default function Hero() {
           zIndex: 8,
         }}
       >
-        <motion.img
-              {...photoMotion}
+        <img
           src={red1Background}
           alt=""
           aria-hidden="true"
@@ -505,8 +419,7 @@ export default function Hero() {
           }}
         >
 
-        <motion.img
-              {...photoMotion}
+        <img
           src={whiteLine}
           alt=""
           style={{
@@ -522,8 +435,8 @@ export default function Hero() {
             width: "100%",
             boxSizing: "border-box",
 
-            paddingLeft: "35px",
-            paddingRight: "35px",
+            paddingLeft: "28px",
+            paddingRight: "28px",
 
             margin: "0 0 0px",
 
@@ -533,8 +446,10 @@ export default function Hero() {
             fontSize: "15px",
             fontWeight: 400,
 
-            lineHeight: 1.35,
+            lineHeight: 1.45,
             textAlign: "center",
+            position: "relative",
+            zIndex: 3,
           }}
         >
           Dengan memohon rahmat dan ridho Allah
@@ -558,8 +473,7 @@ export default function Hero() {
             overflow: "hidden",
           }}
         >
-          <motion.img
-              {...photoMotion}
+          <img
             src={element1}
             alt=""
             aria-hidden="true"
@@ -580,8 +494,8 @@ export default function Hero() {
               zIndex: 1,
             }}
           />
-          <motion.img
-              {...photoMotion}
+          <img
+            ref={secondPhotoRef}
             src={secondPhoto}
             alt="Yuni dan Ardian"
             style={{
@@ -598,6 +512,9 @@ export default function Hero() {
               padding: 0,
 
               zIndex: 5,
+
+              opacity: secondPhotoVisible ? 1 : 0,
+              transition: "opacity 2s ease-out",
             }}
           />
         </div>
@@ -715,8 +632,7 @@ export default function Hero() {
             — Ar-Rum · Ayat 21 —
           </p>
         </div>
-        <motion.img
-              {...photoMotion}
+        <img
           src={whiteLine}
           alt=""
           style={{
@@ -728,11 +644,10 @@ export default function Hero() {
         />
 
         </div>
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         id="acara"
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           width: "100%",
@@ -751,8 +666,7 @@ export default function Hero() {
           zIndex: 7,
         }}
       >
-        <motion.img
-              {...photoMotion}
+        <img
           src={white2Background}
           alt=""
           aria-hidden="true"
@@ -785,8 +699,7 @@ export default function Hero() {
             boxSizing: "border-box",
           }}
         >
-          <motion.img
-              {...photoMotion}
+          <img
             src={yearPhoto}
           alt="Tahun 2026"
           style={{
@@ -797,8 +710,7 @@ export default function Hero() {
             padding: 0,
           }}
         />
-        <motion.img
-              {...photoMotion}
+        <img
           src={calendarPhoto}
           alt="Kalender September 2026"
           style={{
@@ -825,8 +737,7 @@ export default function Hero() {
             textAlign: "center",
           }}
         >
-          <motion.img
-              {...photoMotion}
+          <img
             src={redLine}
             alt=""
             style={{
@@ -884,8 +795,7 @@ export default function Hero() {
           >
             20.00 WITA - Selesai
           </div>
-          <motion.img
-              {...photoMotion}
+          <img
             src={redLine}
             alt=""
             style={{
@@ -898,11 +808,10 @@ export default function Hero() {
         </div>
           <Countdown />
         </div>
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         id="mempelai"
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           zIndex: 6,
@@ -989,8 +898,8 @@ export default function Hero() {
                 "0 3px 8px rgba(0, 0, 0, 0.18)",
             }}
           >
-            <motion.img
-              {...photoMotion}
+            <img
+              ref={bridePhotoRef}
               src={framePhoto2}
               alt="Wahyuni, A.Md.Kep."
               style={{
@@ -1001,6 +910,9 @@ export default function Hero() {
 
                 margin: 0,
                 padding: 0,
+
+                opacity: bridePhotoVisible ? 1 : 0,
+                transition: "opacity 2s ease-out",
               }}
             />
             <div
@@ -1078,8 +990,8 @@ export default function Hero() {
                 "0 3px 8px rgba(0, 0, 0, 0.18)",
             }}
           >
-            <motion.img
-              {...photoMotion}
+            <img
+              ref={groomPhotoRef}
               src={framePhoto3}
               alt="Briptu Ardian Syaputra, S.H."
               style={{
@@ -1090,6 +1002,9 @@ export default function Hero() {
 
                 margin: 0,
                 padding: 0,
+
+                opacity: groomPhotoVisible ? 1 : 0,
+                transition: "opacity 2s ease-out",
               }}
             />
             <div
@@ -1139,7 +1054,7 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
       <GallerySection
         id="galeri"
         zIndex={5}
@@ -1162,10 +1077,9 @@ export default function Hero() {
         light
         photos={gallery3Photos}
       />
-      <motion.div
+      <div
         id="rsvp"
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           zIndex: 2,
@@ -1181,11 +1095,10 @@ export default function Hero() {
         }}
       >
         <RSVP />
-      </motion.div>
-      <motion.div
+      </div>
+      <div
         id="gift"
         className="scroll-reveal-section"
-        {...sectionMotion}
         style={{
           position: "relative",
           zIndex: 1,
@@ -1306,8 +1219,7 @@ export default function Hero() {
                 justifyContent: "flex-start",
               }}
             >
-              <motion.img
-              {...photoMotion}
+              <img
                 src={briLogo}
                 alt="BRI Wahyuni"
                 style={{
@@ -1475,8 +1387,7 @@ export default function Hero() {
                 justifyContent: "flex-start",
               }}
             >
-              <motion.img
-              {...photoMotion}
+              <img
                 src={briArdian}
                 alt="BRI Ardian Syaputra"
                 style={{
@@ -1685,7 +1596,7 @@ export default function Hero() {
           </div>
         </div>
 
-      </motion.div>
+      </div>
 
       <div style={{ height: "95px" }} />
 
@@ -1701,8 +1612,41 @@ function GallerySection({
   photos,
   light = false,
 }) {
+  const photoRefs = useRef([]);
+  const [visiblePhotos, setVisiblePhotos] = useState({});
+
+  useEffect(() => {
+    const observers = photoRefs.current.map((element, index) => {
+      if (!element) return null;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setVisiblePhotos((current) => ({
+              ...current,
+              [index]: true,
+            }));
+
+            observer.unobserve(element);
+          }
+        },
+        {
+          threshold: 0.15,
+          rootMargin: "0px 0px -8% 0px",
+        }
+      );
+
+      observer.observe(element);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach((observer) => observer?.disconnect());
+    };
+  }, []);
+
   return (
-    <motion.div
+    <div
       id={id}
       className="scroll-reveal-section"
       {...sectionMotion}
@@ -1732,8 +1676,7 @@ function GallerySection({
       }}
     >
       {light && (
-        <motion.img
-              {...photoMotion}
+        <img
           src={background}
           alt=""
           aria-hidden="true"
@@ -1824,21 +1767,10 @@ function GallerySection({
                 justifyContent: "center",
               }}
             >
-              <motion.img
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      duration: 0.9,
-                      delay: index * 0.08,
-                      ease: "easeOut",
-                    },
-                  },
+              <img
+                ref={(element) => {
+                  photoRefs.current[index] = element;
                 }}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
                 src={photo}
                 alt={`Gallery ${index + 1}`}
                 loading="lazy"
@@ -1851,13 +1783,16 @@ function GallerySection({
                   margin: 0,
                   padding: 0,
                   border: "none",
+
+                  opacity: visiblePhotos[index] ? 1 : 0,
+                  transition: "opacity 2s ease-out",
                 }}
               />
             </div>
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

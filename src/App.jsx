@@ -7,7 +7,6 @@ import {
 
 import Opening from "./components/Opening";
 import Hero from "./components/Hero";
-import FlowerPetals from "./components/FlowerPetals";
 
 const weddingMusic = new URL(
   "./assets/music/wedding.mp3",
@@ -22,7 +21,6 @@ const redBackground = new URL(
 function App() {
   const [opened, setOpened] = useState(false);
   const [muted, setMuted] = useState(false);
-  const [showPetals, setShowPetals] = useState(false);
 
   const audioRef = useRef(null);
 
@@ -34,13 +32,11 @@ function App() {
       audioRef.current.loop = true;
       audioRef.current.volume = 0.65;
       audioRef.current.muted = muted;
-
       audioRef.current.currentTime = 60;
     }
 
     audioRef.current.play().catch(() => {});
 
-    setShowPetals(true);
     setOpened(true);
   };
 
@@ -55,19 +51,16 @@ function App() {
 
   return (
     <div
-  style={{
-    width: "100%",
-    minHeight: "100vh",
-
-    backgroundColor: "transparent",
-    backgroundImage: `url(${redBackground})`,
-    backgroundSize: "100% 100%",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}
->
-      <FlowerPetals active={showPetals} />
-
+      style={{
+        width: "100%",
+        minHeight: "100vh",
+        backgroundColor: "transparent",
+        backgroundImage: `url(${redBackground})`,
+        backgroundSize: "100% 100%",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <AnimatePresence mode="wait">
         {!opened ? (
           <motion.div

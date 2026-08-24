@@ -261,93 +261,16 @@ body {
   font-size: 16px;
 }
 
-.scroll-reveal-section {
-  opacity: 0;
-  transform: translate3d(0, 35px, 0);
-  filter: blur(4px);
-  transition:
-    opacity 0.9s ease,
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.9s ease;
-  will-change: opacity, transform, filter;
-}
-
+/* Scroll reveal dimatikan agar auto-scroll tetap ringan. */
+.scroll-reveal-section,
 .scroll-reveal-section.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
+  transform: none;
+  filter: none;
 }
 
-.scroll-reveal-section.is-visible > * {
-  animation-name: scrollRevealChild;
-  animation-duration: 0.75s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  animation-fill-mode: both;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(1) {
-  animation-delay: 0.05s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(2) {
-  animation-delay: 0.12s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(3) {
-  animation-delay: 0.19s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(4) {
-  animation-delay: 0.26s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(5) {
-  animation-delay: 0.33s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(6) {
-  animation-delay: 0.4s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(7) {
-  animation-delay: 0.47s;
-}
-
-.scroll-reveal-section.is-visible > *:nth-child(8) {
-  animation-delay: 0.54s;
-}
-
-@keyframes scrollRevealChild {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 20px, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.scroll-reveal-section.is-visible img {
-  animation:
-    scrollRevealImage 0.9s
-    cubic-bezier(0.22, 1, 0.36, 1)
-    both;
-}
-
-@keyframes scrollRevealImage {
-  from {
-    opacity: 0;
-    transform: scale(0.97) translate3d(0, 15px, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) translate3d(0, 0, 0);
-  }
-}
-
+.scroll-reveal-section.is-visible > *,
+.scroll-reveal-section.is-visible img,
 .scroll-reveal-section .scroll-reveal-ignore {
   animation: none !important;
 }
@@ -361,10 +284,7 @@ body {
     transition: none;
   }
 
-  .scroll-reveal-section.is-visible > * {
-    animation: none !important;
-  }
-
+  .scroll-reveal-section.is-visible > *,
   .scroll-reveal-section.is-visible img {
     animation: none !important;
   }
