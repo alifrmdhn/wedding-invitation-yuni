@@ -117,10 +117,13 @@ export default function Hero() {
   useEffect(() => {
     let rafId = null;
     let stopped = false;
-    let scrollPosition = window.scrollY;
     let lastTime = performance.now();
+    let scrollPosition = window.scrollY;
 
-    const speed = 175;
+    const isMobile =
+      window.matchMedia("(max-width: 768px)").matches;
+
+    const speed = isMobile ? 165 : 175;
 
     const stop = () => {
       if (stopped) return;
@@ -137,7 +140,7 @@ export default function Hero() {
 
       const elapsed = Math.min(
         Math.max(now - lastTime, 0),
-        20
+        18
       );
 
       lastTime = now;
@@ -146,7 +149,7 @@ export default function Hero() {
         document.documentElement.scrollHeight -
         window.innerHeight;
 
-      if (scrollPosition >= maxScroll) {
+      if (scrollPosition >= maxScroll - 0.5) {
         window.scrollTo(0, maxScroll);
         stop();
         return;
@@ -166,7 +169,7 @@ export default function Hero() {
       scrollPosition = window.scrollY;
       lastTime = performance.now();
       rafId = requestAnimationFrame(tick);
-    }, 100);
+    }, 120);
 
     window.addEventListener("wheel", stop, {
       passive: true,
@@ -1594,8 +1597,6 @@ function GallerySection({
         paddingBottom: "80px",
         textAlign: "center",
         overflow: "visible",
-        contentVisibility: "auto",
-        contain: "layout paint",
         ...(light
           ? {
               background: "transparent",
@@ -1639,7 +1640,6 @@ function GallerySection({
           flexDirection: "column",
           alignItems: "center",
           boxSizing: "border-box",
-          contain: "layout paint",
         }}
       >
         <div
@@ -1699,13 +1699,13 @@ function GallerySection({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                contain: "layout paint",
-              }}
+                    }}
             >
               <img
                 src={photo}
                 alt={`Gallery ${index + 1}`}
                 loading="lazy"
+                decoding="async"
                 style={{
                   display: "block",
                   width: "100%",
