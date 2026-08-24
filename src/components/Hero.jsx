@@ -115,61 +115,66 @@ export default function Hero() {
 
 
   useEffect(() => {
+    let rafId = null;
     let stopped = false;
-    let timer = null;
+    let lastTime = null;
+    let scrollPosition = window.scrollY;
 
     const speed = 175;
-    const chunkDistance = 320;
-    const chunkDuration = (chunkDistance / speed) * 1000;
 
     const stop = () => {
       if (stopped) return;
 
       stopped = true;
 
-      if (timer !== null) {
-        clearTimeout(timer);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
       }
     };
 
-    const scrollChunk = () => {
+    const tick = (now) => {
       if (stopped) return;
+
+      if (lastTime === null) {
+        lastTime = now;
+      }
+
+      const elapsed = Math.min(now - lastTime, 34);
+      lastTime = now;
 
       const maxScroll =
         document.documentElement.scrollHeight -
         window.innerHeight;
 
-      const currentScroll = window.scrollY;
-
-      if (currentScroll >= maxScroll - 1) {
+      if (scrollPosition >= maxScroll - 0.5) {
         window.scrollTo({
           top: maxScroll,
           behavior: "auto",
         });
+
         stop();
         return;
       }
 
-      const target = Math.min(
-        currentScroll + chunkDistance,
+      const distance = (speed * elapsed) / 1000;
+
+      scrollPosition = Math.min(
+        scrollPosition + distance,
         maxScroll
       );
 
       window.scrollTo({
-        top: target,
-        behavior: "smooth",
+        top: scrollPosition,
+        behavior: "auto",
       });
 
-      timer = window.setTimeout(
-        scrollChunk,
-        chunkDuration
-      );
+      rafId = requestAnimationFrame(tick);
     };
 
-    const startTimer = window.setTimeout(
-      scrollChunk,
-      150
-    );
+    const startTimer = window.setTimeout(() => {
+      scrollPosition = window.scrollY;
+      rafId = requestAnimationFrame(tick);
+    }, 100);
 
     window.addEventListener("wheel", stop, {
       passive: true,
