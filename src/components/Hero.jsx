@@ -121,6 +121,7 @@ export default function Hero() {
 
     const speed = 175;
     const durationPerFrame = 1000 / 60;
+    const maxStep = 4.5;
 
     const stop = () => {
       if (stopped) return;
@@ -150,8 +151,13 @@ export default function Hero() {
         return;
       }
 
+      const step = Math.min(
+        (speed * durationPerFrame) / 1000,
+        maxStep
+      );
+
       const nextScroll = Math.min(
-        currentScroll + (speed * durationPerFrame) / 1000,
+        currentScroll + step,
         maxScroll
       );
 
