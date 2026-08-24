@@ -7,6 +7,7 @@ import {
 
 import Opening from "./components/Opening";
 import Hero from "./components/Hero";
+import GuestManager from "./components/GuestManager";
 
 const weddingMusic = new URL(
   "./assets/music/wedding.mp3",
@@ -24,6 +25,21 @@ function App() {
 
   const audioRef = useRef(null);
 
+  // =====================================================
+  // HALAMAN ADMIN TAMU
+  // =====================================================
+
+  if (
+    window.location.pathname ===
+    "/admin-tamu"
+  ) {
+    return <GuestManager />;
+  }
+
+  // =====================================================
+  // BUKA UNDANGAN
+  // =====================================================
+
   const openInvitation = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(weddingMusic);
@@ -40,12 +56,19 @@ function App() {
     setOpened(true);
   };
 
+  // =====================================================
+  // TOGGLE MUSIK
+  // =====================================================
+
   const toggleMusic = () => {
     if (!audioRef.current) return;
 
-    const nextMuted = !audioRef.current.muted;
+    const nextMuted =
+      !audioRef.current.muted;
 
-    audioRef.current.muted = nextMuted;
+    audioRef.current.muted =
+      nextMuted;
+
     setMuted(nextMuted);
   };
 
@@ -74,7 +97,9 @@ function App() {
               ease: "easeInOut",
             }}
           >
-            <Opening onOpen={openInvitation} />
+            <Opening
+              onOpen={openInvitation}
+            />
           </motion.div>
         ) : (
           <motion.div
@@ -108,7 +133,8 @@ function App() {
           }
           style={{
             position: "fixed",
-            right: "max(9px, calc(50% - 185px))",
+            right:
+              "max(9px, calc(50% - 185px))",
             bottom: "95px",
             zIndex: 1100,
             width: "42px",
@@ -117,7 +143,8 @@ function App() {
             alignItems: "center",
             justifyContent: "center",
             padding: 0,
-            border: "1px solid rgba(176, 0, 58, 0.35)",
+            border:
+              "1px solid rgba(176, 0, 58, 0.35)",
             borderRadius: "50%",
             background: "transparent",
             color: "#0e0d0dff",
@@ -125,26 +152,34 @@ function App() {
             cursor: "pointer",
             boxSizing: "border-box",
             backdropFilter: "none",
-            WebkitBackdropFilter: "none",
+            WebkitBackdropFilter:
+              "none",
             boxShadow:
               "0 5px 16px rgba(0,0,0,0.16), 0 2px 6px rgba(176,0,58,0.10)",
             transition:
               "transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease",
           }}
           onMouseDown={(e) => {
-            e.currentTarget.style.transform = "scale(0.92)";
+            e.currentTarget.style.transform =
+              "scale(0.92)";
           }}
           onMouseUp={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.transform =
+              "scale(1)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.transform =
+              "scale(1)";
           }}
         >
           {muted ? (
-            <FaVolumeXmark aria-hidden="true" />
+            <FaVolumeXmark
+              aria-hidden="true"
+            />
           ) : (
-            <FaVolumeHigh aria-hidden="true" />
+            <FaVolumeHigh
+              aria-hidden="true"
+            />
           )}
         </button>
       )}
