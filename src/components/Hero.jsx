@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import {
   FaHouseChimney,
   FaUserGroup,
@@ -116,24 +115,24 @@ export default function Hero() {
 
 
   useEffect(() => {
-    let rafId = null;
     let stopped = false;
+    let timer = null;
 
     const speed = 175;
-    const durationPerFrame = 1000 / 60;
-    const maxStep = 4.5;
+    const chunkDistance = 320;
+    const chunkDuration = (chunkDistance / speed) * 1000;
 
     const stop = () => {
       if (stopped) return;
 
       stopped = true;
 
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
+      if (timer !== null) {
+        clearTimeout(timer);
       }
     };
 
-    const tick = () => {
+    const scrollChunk = () => {
       if (stopped) return;
 
       const maxScroll =
@@ -151,27 +150,26 @@ export default function Hero() {
         return;
       }
 
-      const step = Math.min(
-        (speed * durationPerFrame) / 1000,
-        maxStep
-      );
-
-      const nextScroll = Math.min(
-        currentScroll + step,
+      const target = Math.min(
+        currentScroll + chunkDistance,
         maxScroll
       );
 
       window.scrollTo({
-        top: nextScroll,
-        behavior: "auto",
+        top: target,
+        behavior: "smooth",
       });
 
-      rafId = requestAnimationFrame(tick);
+      timer = window.setTimeout(
+        scrollChunk,
+        chunkDuration
+      );
     };
 
-    const startTimer = window.setTimeout(() => {
-      rafId = requestAnimationFrame(tick);
-    }, 50);
+    const startTimer = window.setTimeout(
+      scrollChunk,
+      150
+    );
 
     window.addEventListener("wheel", stop, {
       passive: true,
@@ -194,7 +192,7 @@ export default function Hero() {
     window.addEventListener("keydown", stop);
 
     return () => {
-      window.clearTimeout(startTimer);
+      clearTimeout(startTimer);
       stop();
 
       window.removeEventListener("wheel", stop);
