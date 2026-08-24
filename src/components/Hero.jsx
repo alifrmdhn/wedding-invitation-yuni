@@ -120,7 +120,7 @@ export default function Hero() {
     let lastTime = performance.now();
     let stopped = false;
 
-    const speed = 150;
+    const speed = 175;
 
     const stop = () => {
       if (stopped) return;
