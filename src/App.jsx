@@ -32,7 +32,7 @@ function App() {
       audioRef.current.loop = true;
       audioRef.current.volume = 0.65;
       audioRef.current.muted = muted;
-      audioRef.current.currentTime = 60;
+      audioRef.current.currentTime = 26;
     }
 
     audioRef.current.play().catch(() => {});
