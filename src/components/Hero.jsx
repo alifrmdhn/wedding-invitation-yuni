@@ -79,37 +79,6 @@ const WEDDING_GIFT_PADDING_TOP = "70px";
 
 const sectionMotion = {};
 const fadeInMotion = {};
-const photoMotion = {};
-
-function useScrollFadeIn() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.unobserve(element);
-        }
-      },
-      {
-        threshold: 0.15,
-        rootMargin: "0px 0px -8% 0px",
-      }
-    );
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
-  return [ref, visible];
-}
 
 const gallery1Photos = [
   new URL("../assets/gal1.jpeg", import.meta.url).href,
@@ -145,10 +114,6 @@ const briArdian = new URL(
 export default function Hero() {
   const [copiedAccount, setCopiedAccount] = useState("");
 
-  const [heroPhotoRef, heroPhotoVisible] = useScrollFadeIn();
-  const [secondPhotoRef, secondPhotoVisible] = useScrollFadeIn();
-  const [bridePhotoRef, bridePhotoVisible] = useScrollFadeIn();
-  const [groomPhotoRef, groomPhotoVisible] = useScrollFadeIn();
 
   useEffect(() => {
     let rafId = null;
@@ -307,15 +272,12 @@ export default function Hero() {
           }}
         >
           <img
-            ref={heroPhotoRef}
             src={heroPhoto}
             alt="Yuni dan Ardian"
             style={{
               display: "block",
               width: "100%",
               height: "auto",
-              opacity: heroPhotoVisible ? 1 : 0,
-              transition: "opacity 2s ease-out",
             }}
           />
 
@@ -495,7 +457,6 @@ export default function Hero() {
             }}
           />
           <img
-            ref={secondPhotoRef}
             src={secondPhoto}
             alt="Yuni dan Ardian"
             style={{
@@ -512,9 +473,6 @@ export default function Hero() {
               padding: 0,
 
               zIndex: 5,
-
-              opacity: secondPhotoVisible ? 1 : 0,
-              transition: "opacity 2s ease-out",
             }}
           />
         </div>
@@ -899,7 +857,6 @@ export default function Hero() {
             }}
           >
             <img
-              ref={bridePhotoRef}
               src={framePhoto2}
               alt="Wahyuni, A.Md.Kep."
               style={{
@@ -910,9 +867,6 @@ export default function Hero() {
 
                 margin: 0,
                 padding: 0,
-
-                opacity: bridePhotoVisible ? 1 : 0,
-                transition: "opacity 2s ease-out",
               }}
             />
             <div
@@ -991,7 +945,6 @@ export default function Hero() {
             }}
           >
             <img
-              ref={groomPhotoRef}
               src={framePhoto3}
               alt="Briptu Ardian Syaputra, S.H."
               style={{
@@ -1002,9 +955,6 @@ export default function Hero() {
 
                 margin: 0,
                 padding: 0,
-
-                opacity: groomPhotoVisible ? 1 : 0,
-                transition: "opacity 2s ease-out",
               }}
             />
             <div
@@ -1612,38 +1562,6 @@ function GallerySection({
   photos,
   light = false,
 }) {
-  const photoRefs = useRef([]);
-  const [visiblePhotos, setVisiblePhotos] = useState({});
-
-  useEffect(() => {
-    const observers = photoRefs.current.map((element, index) => {
-      if (!element) return null;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setVisiblePhotos((current) => ({
-              ...current,
-              [index]: true,
-            }));
-
-            observer.unobserve(element);
-          }
-        },
-        {
-          threshold: 0.15,
-          rootMargin: "0px 0px -8% 0px",
-        }
-      );
-
-      observer.observe(element);
-      return observer;
-    });
-
-    return () => {
-      observers.forEach((observer) => observer?.disconnect());
-    };
-  }, []);
 
   return (
     <div
@@ -1768,9 +1686,6 @@ function GallerySection({
               }}
             >
               <img
-                ref={(element) => {
-                  photoRefs.current[index] = element;
-                }}
                 src={photo}
                 alt={`Gallery ${index + 1}`}
                 loading="lazy"
@@ -1783,9 +1698,6 @@ function GallerySection({
                   margin: 0,
                   padding: 0,
                   border: "none",
-
-                  opacity: visiblePhotos[index] ? 1 : 0,
-                  transition: "opacity 2s ease-out",
                 }}
               />
             </div>
