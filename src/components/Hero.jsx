@@ -928,7 +928,7 @@ export default function Hero() {
           >
             <div>Putri pertama dari</div>
             <div>
-              Bapak Jumainɡ &amp; Ibu Marsiani
+              Bapak Jumainɡ &amp; Ibu Masriani
             </div>
           </div>
         </div>
