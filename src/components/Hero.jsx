@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   FaHouseChimney,
   FaUserGroup,
@@ -12,18 +12,23 @@ import {
 import Countdown from "./Countdown";
 import RSVP from "./RSVP";
 
-const heroBackground = new URL(
-  "../assets/layout bg.png",
-  import.meta.url
-).href;
-
-const redBackground = new URL(
-  "../assets/bg merah.png",
-  import.meta.url
-).href;
-
 const heroPhoto = new URL(
   "../assets/foto 1.png",
+  import.meta.url
+).href;
+
+const white2Background = new URL(
+  "../assets/putih 2.png",
+  import.meta.url
+).href;
+
+const white1Background = new URL(
+  "../assets/putih 1.png",
+  import.meta.url
+).href;
+
+const red1Background = new URL(
+  "../assets/merah 1.png",
   import.meta.url
 ).href;
 
@@ -58,7 +63,7 @@ const redLine = new URL(
 ).href;
 
 const framePhoto2 = new URL(
-  "../assets/foto frame 2.png",
+  "../assets/foto frame 2.jpeg",
   import.meta.url
 ).href;
 
@@ -67,30 +72,86 @@ const framePhoto3 = new URL(
   import.meta.url
 ).href;
 
-const upSliderPhoto = new URL(
-  "../assets/up slider.png",
-  import.meta.url
-).href;
+const RED_INTRO_PADDING_TOP = "175px"; 
+const RED_INTRO_CONTENT_OFFSET_Y = "0px";
+const YEAR_SECTION_PADDING_TOP = "65px"; 
+const WEDDING_GIFT_PADDING_TOP = "70px";
 
-const sliderPhotos = [
-  new URL("../assets/slider1.jpeg", import.meta.url).href,
-  new URL("../assets/slider2.jpeg", import.meta.url).href,
-  new URL("../assets/slider3.jpeg", import.meta.url).href,
-  new URL("../assets/slider4.jpeg", import.meta.url).href,
-  new URL("../assets/slider5.jpeg", import.meta.url).href,
-  new URL("../assets/slider6.jpeg", import.meta.url).href,
-  new URL("../assets/slider7.jpeg", import.meta.url).href,
-  new URL("../assets/slider8.jpeg", import.meta.url).href,
-  new URL("../assets/slider10.jpeg", import.meta.url).href,
-  new URL("../assets/slider11.jpeg", import.meta.url).href,
-  new URL("../assets/slider13.jpeg", import.meta.url).href,
-  new URL("../assets/slider14.jpeg", import.meta.url).href,
-  new URL("../assets/slider15.jpeg", import.meta.url).href,
-  new URL("../assets/slider16.jpeg", import.meta.url).href,
-  new URL("../assets/slider17.jpeg", import.meta.url).href,
-  new URL("../assets/slider18.jpeg", import.meta.url).href,
-  new URL("../assets/slider19.jpeg", import.meta.url).href,
-  new URL("../assets/slider20.jpeg", import.meta.url).href,
+const sectionVariants = {
+  hidden: { opacity: 0, y: 32 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const fadeInVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 1,
+      ease: "easeOut",
+    },
+  },
+};
+
+const photoVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 1.6,
+      ease: "easeOut",
+    },
+  },
+};
+
+const sectionMotion = {
+  variants: sectionVariants,
+  initial: "hidden",
+  whileInView: "visible",
+  viewport: { once: true, amount: 0.08 },
+};
+
+const fadeInMotion = {
+  variants: fadeInVariants,
+  initial: "hidden",
+  whileInView: "visible",
+  viewport: { once: true, amount: 0.12 },
+};
+
+const photoMotion = {
+  variants: photoVariants,
+  initial: "hidden",
+  whileInView: "visible",
+  viewport: { once: true, amount: 0.15 },
+};
+ 
+
+const gallery1Photos = [
+  new URL("../assets/gal1.jpeg", import.meta.url).href,
+  new URL("../assets/gal2.jpeg", import.meta.url).href,
+  new URL("../assets/gal3.jpeg", import.meta.url).href,
+  new URL("../assets/gal4.jpeg", import.meta.url).href,
+];
+
+const gallery2Photos = [
+  new URL("../assets/gal5.jpeg", import.meta.url).href,
+  new URL("../assets/gal6.jpeg", import.meta.url).href,
+  new URL("../assets/gal7.jpeg", import.meta.url).href,
+  new URL("../assets/gal8.jpeg", import.meta.url).href,
+];
+
+const gallery3Photos = [
+  new URL("../assets/gal9.jpeg", import.meta.url).href,
+  new URL("../assets/gal10.jpeg", import.meta.url).href,
+  new URL("../assets/gal11.jpeg", import.meta.url).href,
+  new URL("../assets/gal12.jpeg", import.meta.url).href,
 ];
 
 const briLogo = new URL(
@@ -104,18 +165,7 @@ const briArdian = new URL(
 ).href;
 
 export default function Hero() {
-  const [currentPhoto, setCurrentPhoto] = useState(0);
   const [copiedAccount, setCopiedAccount] = useState("");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhoto(
-        (prev) => (prev + 1) % sliderPhotos.length
-      );
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const sections = document.querySelectorAll(
@@ -267,19 +317,16 @@ export default function Hero() {
         maxWidth: "390px",
         margin: "0 auto",
 
-        backgroundImage: `url("${heroBackground}"), url("${redBackground}")`,
-        backgroundSize: "100% auto, cover",
-        backgroundPosition: "top center, center center",
-        backgroundRepeat: "no-repeat, no-repeat",
-
         boxSizing: "border-box",
       }}
     >
 
-      <div
+      <motion.div
         id="home"
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -289,17 +336,40 @@ export default function Hero() {
           paddingBottom: "25px",
 
           boxSizing: "border-box",
+          overflow: "visible",
+          zIndex: 9,
         }}
       >
 
+        <motion.img
+              {...photoMotion}
+          src={white2Background}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "auto",
+            display: "block",
+            margin: 0,
+            padding: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
+
         <div
           style={{
+            position: "relative",
+            zIndex: 3,
             color: "#b0003a",
             fontFamily: '"Heligthon Signature", cursive',
-            fontSize: "35px",
-            lineHeight: 1,
+            fontSize: "42px",
+            lineHeight: 0.9,
             textAlign: "center",
-            marginBottom: "5px",
+            marginBottom: "10px",
           }}
         >
           The Wedding Of
@@ -307,6 +377,8 @@ export default function Hero() {
 
         <div
           style={{
+            position: "relative",
+            zIndex: 1,
             width: "90%",
             background: "#fff",
             border: "1.5px solid #333",
@@ -316,11 +388,12 @@ export default function Hero() {
             transform: "scale(1.25)",
             transformOrigin: "top center",
 
-            marginTop: "20px",
+            marginTop: "-10px",
             marginBottom: "-95px",
           }}
         >
-          <img
+          <motion.img
+              {...photoMotion}
             src={heroPhoto}
             alt="Yuni dan Ardian"
             style={{
@@ -343,7 +416,7 @@ export default function Hero() {
                 margin: 0,
                 fontFamily:
                   '"Heligthon Signature", cursive',
-                fontSize: "13px",
+                fontSize: "15px",
                 lineHeight: 1,
               }}
             >
@@ -354,12 +427,12 @@ export default function Hero() {
               style={{
                 display: "block",
                 margin: "3px 0",
-                fontFamily: "Arial, sans-serif",
-                fontSize: "4px",
+                fontFamily: '"Heligthon Signature", cursive',
+                fontSize: "10px",
                 letterSpacing: "0.4em",
               }}
             >
-              DENGAN
+              Dengan
             </span>
 
             <p
@@ -367,7 +440,7 @@ export default function Hero() {
                 margin: 0,
                 fontFamily:
                   '"Heligthon Signature", cursive',
-                fontSize: "12px",
+                fontSize: "15px",
                 lineHeight: 1,
               }}
             >
@@ -375,11 +448,13 @@ export default function Hero() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div
+      <motion.div
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -387,13 +462,51 @@ export default function Hero() {
 
           boxSizing: "border-box",
 
-          paddingTop: "200px",
-          paddingBottom: "40px",
+          paddingTop: RED_INTRO_PADDING_TOP,
+          paddingBottom: "80px",
+
+          overflow: "visible",
+          zIndex: 8,
         }}
       >
-        {}
+        <motion.img
+              {...photoMotion}
+          src={red1Background}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
 
-        <img
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "fill",
+
+            display: "block",
+            margin: 0,
+            padding: 0,
+
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box",
+            transform: `translateY(${RED_INTRO_CONTENT_OFFSET_Y})`,
+          }}
+        >
+
+        <motion.img
+              {...photoMotion}
           src={whiteLine}
           alt=""
           style={{
@@ -429,9 +542,6 @@ export default function Hero() {
           Bapak/Ibu/Saudara/i untuk hadir dan memberikan
           do&apos;a rest pada acara pernikahan kami.
         </p>
-
-        {}
-
         <div
           style={{
             position: "relative",
@@ -441,24 +551,23 @@ export default function Hero() {
             margin: 0,
             padding: 0,
 
-            transform: "translateY(-50px)",
+            transform: "translateY(-20px)",
 
             boxSizing: "border-box",
 
             overflow: "hidden",
           }}
         >
-          {}
-
-          <img
+          <motion.img
+              {...photoMotion}
             src={element1}
             alt=""
             aria-hidden="true"
             style={{
               position: "absolute",
 
-              top: "-2%",
-              right: "-22%",
+              top: "-3%",
+              right: "-29%",
 
               width: "58%",
               height: "auto",
@@ -471,36 +580,8 @@ export default function Hero() {
               zIndex: 1,
             }}
           />
-
-          {}
-
-          <img
-            src={element1}
-            alt=""
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-
-              bottom: "-7%",
-              left: "-30%",
-
-              width: "70%",
-              height: "auto",
-
-              margin: 0,
-              padding: 9,
-
-              transform: "rotate(180deg)",
-
-              pointerEvents: "none",
-
-              zIndex: 1,
-            }}
-          />
-
-          {}
-
-          <img
+          <motion.img
+              {...photoMotion}
             src={secondPhoto}
             alt="Yuni dan Ardian"
             style={{
@@ -520,40 +601,32 @@ export default function Hero() {
             }}
           />
         </div>
-
-        {}
-
         <div
           style={{
             width: "88%",
 
             boxSizing: "border-box",
 
-            marginTop: "-130px",
+            marginTop: "-100px",
 
             padding: "18px 16px 20px",
 
-            background:
-              "rgba(255, 255, 255, 0.18)",
+            background: "transparent",
 
-            border:
-              "1px solid rgba(255, 255, 255, 0.45)",
+            border: "none",
 
-            borderRadius: "18px",
+            borderRadius: 0,
 
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
 
-            boxShadow:
-              "0 5px 18px rgba(80, 0, 30, 0.12)",
+            boxShadow: "none",
 
             color: "#ffffff",
 
             textAlign: "center",
           }}
         >
-          {}
-
           <p
             dir="rtl"
             style={{
@@ -569,7 +642,7 @@ export default function Hero() {
 
               textAlign: "center",
 
-              color: "#020202ff",
+              color: "#ffffff",
 
               textShadow:
                 "0 1px 3px rgba(80, 0, 30, 0.45)",
@@ -581,9 +654,6 @@ export default function Hero() {
             وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ
             لِّقَوْمٍ يَّتَفَكَّرُوْنَ
           </p>
-
-          {}
-
           <div
             style={{
               width: "55%",
@@ -593,9 +663,6 @@ export default function Hero() {
                 "rgba(255, 255, 255, 0.40)",
             }}
           />
-
-          {}
-
           <p
             style={{
               margin: 0,
@@ -625,9 +692,6 @@ export default function Hero() {
             itu benar-benar terdapat tanda-tanda
             (kebesaran Allah) bagi kaum yang berpikir.
           </p>
-
-          {}
-
           <p
             style={{
               margin: "12px 0 0",
@@ -651,10 +715,8 @@ export default function Hero() {
             — Ar-Rum · Ayat 21 —
           </p>
         </div>
-
-        {}
-
-        <img
+        <motion.img
+              {...photoMotion}
           src={whiteLine}
           alt=""
           style={{
@@ -664,14 +726,15 @@ export default function Hero() {
             marginTop: "25px",
           }}
         />
-      </div>
 
-      {}
-
-      <div
+        </div>
+      </motion.div>
+      <motion.div
         id="acara"
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -679,16 +742,52 @@ export default function Hero() {
 
           boxSizing: "border-box",
 
-          paddingTop: "50px",
+          paddingTop: YEAR_SECTION_PADDING_TOP,
           paddingBottom: "60px",
+          marginTop: "-40px",
 
           background: "transparent",
+          overflow: "visible",
+          zIndex: 7,
         }}
       >
-        {}
+        <motion.img
+              {...photoMotion}
+          src={white2Background}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "-40px",
+            left: 0,
 
-        <img
-          src={yearPhoto}
+            width: "100%",
+            height: "calc(100% + 40px)",
+            objectFit: "fill",
+
+            display: "block",
+            margin: 0,
+            padding: 0,
+
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            boxSizing: "border-box",
+          }}
+        >
+          <motion.img
+              {...photoMotion}
+            src={yearPhoto}
           alt="Tahun 2026"
           style={{
             display: "block",
@@ -698,10 +797,8 @@ export default function Hero() {
             padding: 0,
           }}
         />
-
-        {}
-
-        <img
+        <motion.img
+              {...photoMotion}
           src={calendarPhoto}
           alt="Kalender September 2026"
           style={{
@@ -713,9 +810,6 @@ export default function Hero() {
             boxSizing: "border-box",
           }}
         />
-
-        {}
-
         <div
           style={{
             width: "100%",
@@ -731,9 +825,8 @@ export default function Hero() {
             textAlign: "center",
           }}
         >
-          {}
-
-          <img
+          <motion.img
+              {...photoMotion}
             src={redLine}
             alt=""
             style={{
@@ -743,9 +836,6 @@ export default function Hero() {
               margin: "0 auto 12px",
             }}
           />
-
-          {}
-
           <div
             style={{
               fontFamily:
@@ -758,9 +848,6 @@ export default function Hero() {
           >
             Akad - Kediaman Mempelai Wanita
           </div>
-
-          {}
-
           <div
             style={{
               fontFamily: "Arial, sans-serif",
@@ -773,9 +860,6 @@ export default function Hero() {
           >
             10.00 WITA - Selesai
           </div>
-
-          {}
-
           <div
             style={{
               fontFamily:
@@ -788,9 +872,6 @@ export default function Hero() {
           >
             Resepsi - Kediaman Mempelai Wanita
           </div>
-
-          {}
-
           <div
             style={{
               fontFamily: "Arial, sans-serif",
@@ -803,10 +884,8 @@ export default function Hero() {
           >
             20.00 WITA - Selesai
           </div>
-
-          {}
-
-          <img
+          <motion.img
+              {...photoMotion}
             src={redLine}
             alt=""
             style={{
@@ -817,26 +896,30 @@ export default function Hero() {
             }}
           />
         </div>
-
-        {}
-
-        <Countdown />
-      </div>
-
-      {}
-
-      <div
+          <Countdown />
+        </div>
+      </motion.div>
+      <motion.div
         id="mempelai"
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
+          zIndex: 6,
+          backgroundImage: `url(${red1Background})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          overflow: "visible",
+
           width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
 
           boxSizing: "border-box",
-
-          paddingTop: "10px",
+          marginTop: "-40px",
+          paddingTop: "50px",
           paddingBottom: "70px",
 
           textAlign: "center",
@@ -844,8 +927,6 @@ export default function Hero() {
           color: "#ffffff",
         }}
       >
-        {}
-
         <div
           style={{
             color: "#ffffff",
@@ -885,9 +966,6 @@ export default function Hero() {
         >
           Bride &amp; Groom
         </div>
-
-        {}
-
         <div
           style={{
             width: "100%",
@@ -898,25 +976,21 @@ export default function Hero() {
             boxSizing: "border-box",
           }}
         >
-          {}
-
           <div
             style={{
               width: "58%",
 
-              background: "#ffffff",
-
-              border: "1.5px solid #222",
-
               padding: "8px 8px 17px",
 
               boxSizing: "border-box",
+    background: "#ffffff",
 
               boxShadow:
                 "0 3px 8px rgba(0, 0, 0, 0.18)",
             }}
           >
-            <img
+            <motion.img
+              {...photoMotion}
               src={framePhoto2}
               alt="Wahyuni, A.Md.Kep."
               style={{
@@ -929,9 +1003,6 @@ export default function Hero() {
                 padding: 0,
               }}
             />
-
-            {}
-
             <div
               style={{
                 color: "#b0003a",
@@ -953,9 +1024,6 @@ export default function Hero() {
               Wahyuni, A.Md.Kep.
             </div>
           </div>
-
-          {}
-
           <div
             style={{
               marginTop: "14px",
@@ -982,17 +1050,11 @@ export default function Hero() {
             </div>
           </div>
         </div>
-
-        {}
-
         <div
           style={{
             height: "30px",
           }}
         />
-
-        {}
-
         <div
           style={{
             width: "100%",
@@ -1003,25 +1065,21 @@ export default function Hero() {
             boxSizing: "border-box",
           }}
         >
-          {}
-
           <div
             style={{
               width: "58%",
 
-              background: "#ffffff",
-
-              border: "1.5px solid #222",
-
               padding: "8px 8px 17px",
 
               boxSizing: "border-box",
+    background: "#ffffff",
 
               boxShadow:
                 "0 3px 8px rgba(0, 0, 0, 0.18)",
             }}
           >
-            <img
+            <motion.img
+              {...photoMotion}
               src={framePhoto3}
               alt="Briptu Ardian Syaputra, S.H."
               style={{
@@ -1034,9 +1092,6 @@ export default function Hero() {
                 padding: 0,
               }}
             />
-
-            {}
-
             <div
               style={{
                 color: "#b0003a",
@@ -1058,9 +1113,6 @@ export default function Hero() {
               Briptu Ardian Syaputra, S.H.
             </div>
           </div>
-
-          {}
-
           <div
             style={{
               marginTop: "14px",
@@ -1087,420 +1139,62 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
-
-      {}
-
-      <div
+      </motion.div>
+      <GallerySection
         id="galeri"
-        className="scroll-reveal-section"
-        style={{
-          width: "100%",
+        zIndex={5}
+        background={white2Background}
+        light
+        photos={gallery1Photos}
+      />
 
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+      <GallerySection
+        id="galeri2"
+        zIndex={4}
+        background={red1Background}
+        photos={gallery2Photos}
+      />
 
-          boxSizing: "border-box",
-
-          paddingTop: "55px",
-          paddingBottom: "80px",
-
-          background: "transparent",
-
-          textAlign: "center",
-        }}
-      >
-        {}
-
-        <div
-          style={{
-            color: "#000000",
-
-            fontFamily: "Arial, sans-serif",
-            fontSize: "15px",
-            fontWeight: 400,
-
-            letterSpacing: "0.28em",
-
-            lineHeight: 1,
-
-            marginBottom: "9px",
-          }}
-        >
-          GALLERY
-        </div>
-
-        {}
-
-        <div
-          style={{
-            color: "#000000",
-
-            fontFamily:
-              "Georgia, 'Times New Roman', serif",
-            fontSize: "31px",
-            fontWeight: 700,
-
-            lineHeight: 1.05,
-
-            marginBottom: "32px",
-
-            textAlign: "center",
-          }}
-        >
-          Our Moments
-        </div>
-
-        {}
-
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "35px",
-            boxSizing: "border-box",
-          }}
-        >
-          {}
-
-          <div
-            style={{
-              position: "relative",
-              width: "70%",
-              height: "285px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              boxSizing: "border-box",
-            }}
-          >
-            {}
-
-            <motion.div
-              style={{
-                position: "absolute",
-                top: "18px",
-                left: "8px",
-
-                width: "62%",
-                height: "255px",
-
-                background: "#ffffff",
-                border: "1.5px solid #222",
-
-                padding: "7px 7px 16px",
-                boxSizing: "border-box",
-
-                transform: "rotate(-13deg)",
-
-                boxShadow:
-                  "0 3px 8px rgba(0, 0, 0, 0.12)",
-
-                zIndex: 1,
-                overflow: "hidden",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`fan-left-back-${currentPhoto}`}
-                  src={
-                    sliderPhotos[
-                      (currentPhoto + 1) %
-                        sliderPhotos.length
-                    ]
-                  }
-                  alt={`Gallery ${
-                    ((currentPhoto + 1) %
-                      sliderPhotos.length) + 1
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "215px",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    margin: 0,
-                    padding: 0,
-                  }}
-                />
-              </AnimatePresence>
-            </motion.div>
-
-            {}
-
-            <motion.div
-              style={{
-                position: "absolute",
-                top: "5px",
-                left: "22px",
-
-                width: "62%",
-                height: "255px",
-
-                background: "#ffffff",
-                border: "1.5px solid #222",
-
-                padding: "7px 7px 16px",
-                boxSizing: "border-box",
-
-                transform: "rotate(-7deg)",
-
-                boxShadow:
-                  "0 3px 8px rgba(0, 0, 0, 0.13)",
-
-                zIndex: 2,
-                overflow: "hidden",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`fan-left-${currentPhoto}`}
-                  src={
-                    sliderPhotos[
-                      (currentPhoto + 2) %
-                        sliderPhotos.length
-                    ]
-                  }
-                  alt={`Gallery ${
-                    ((currentPhoto + 2) %
-                      sliderPhotos.length) + 1
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "215px",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    margin: 0,
-                    padding: 0,
-                  }}
-                />
-              </AnimatePresence>
-            </motion.div>
-
-            {}
-
-            <motion.div
-              style={{
-                position: "absolute",
-                top: "5px",
-                right: "22px",
-
-                width: "62%",
-                height: "255px",
-
-                background: "#ffffff",
-                border: "1.5px solid #222",
-
-                padding: "7px 7px 16px",
-                boxSizing: "border-box",
-
-                transform: "rotate(7deg)",
-
-                boxShadow:
-                  "0 3px 8px rgba(0, 0, 0, 0.13)",
-
-                zIndex: 2,
-                overflow: "hidden",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`fan-right-${currentPhoto}`}
-                  src={
-                    sliderPhotos[
-                      (currentPhoto + 3) %
-                        sliderPhotos.length
-                    ]
-                  }
-                  alt={`Gallery ${
-                    ((currentPhoto + 3) %
-                      sliderPhotos.length) + 1
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "215px",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    margin: 0,
-                    padding: 0,
-                  }}
-                />
-              </AnimatePresence>
-            </motion.div>
-
-            {}
-
-            <motion.div
-              style={{
-                position: "absolute",
-                top: "18px",
-                right: "8px",
-
-                width: "62%",
-                height: "255px",
-
-                background: "#ffffff",
-                border: "1.5px solid #222",
-
-                padding: "7px 7px 16px",
-                boxSizing: "border-box",
-
-                transform: "rotate(13deg)",
-
-                boxShadow:
-                  "0 3px 8px rgba(0, 0, 0, 0.12)",
-
-                zIndex: 1,
-                overflow: "hidden",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`fan-right-back-${currentPhoto}`}
-                  src={
-                    sliderPhotos[
-                      (currentPhoto + 4) %
-                        sliderPhotos.length
-                    ]
-                  }
-                  alt={`Gallery ${
-                    ((currentPhoto + 4) %
-                      sliderPhotos.length) + 1
-                  }`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "215px",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    margin: 0,
-                    padding: 0,
-                  }}
-                />
-              </AnimatePresence>
-            </motion.div>
-
-            {}
-
-            <motion.div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: "50%",
-
-                width: "62%",
-                height: "255px",
-
-                background: "#ffffff",
-                border: "1.5px solid #222",
-
-                padding: "7px 7px 16px",
-                boxSizing: "border-box",
-
-                transform:
-                  "translateX(-50%) rotate(-3deg)",
-
-                transformOrigin:
-                  "center center",
-
-                boxShadow:
-                  "0 5px 12px rgba(0, 0, 0, 0.2)",
-
-                zIndex: 5,
-                overflow: "hidden",
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={`fan-center-${currentPhoto}`}
-                  src={sliderPhotos[currentPhoto]}
-                  alt={`Gallery ${
-                    currentPhoto + 1
-                  }`}
-                  initial={{
-                    opacity: 0,
-                    scale: 1.02,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.98,
-                  }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "215px",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    margin: 0,
-                    padding: 0,
-                  }}
-                />
-              </AnimatePresence>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
-      {}
-
-      <div
+      <GallerySection
+        id="galeri3"
+        zIndex={3}
+        background={white2Background}
+        light
+        photos={gallery3Photos}
+      />
+      <motion.div
         id="rsvp"
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
+          zIndex: 2,
+          backgroundImage: `url(${red1Background})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          overflow: "visible",
+
           width: "100%",
           boxSizing: "border-box",
-          background: "transparent",
+          marginTop: "-100px",
         }}
       >
         <RSVP />
-      </div>
-
-      {}
-
-      <div
+      </motion.div>
+      <motion.div
         id="gift"
         className="scroll-reveal-section"
+        {...sectionMotion}
         style={{
+          position: "relative",
+          zIndex: 1,
+          backgroundImage: `url(${white1Background})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          overflow: "visible",
+
           width: "100%",
 
           display: "flex",
@@ -1509,17 +1203,13 @@ export default function Hero() {
           justifyContent: "center",
 
           boxSizing: "border-box",
-
-          paddingTop: "200px",
-          paddingBottom: "65px",
+          marginTop: "-40px",
+          paddingTop: WEDDING_GIFT_PADDING_TOP,
+          paddingBottom: "35px",
 
           textAlign: "center",
-
-          background: "transparent",
         }}
       >
-        {}
-
         <div
           style={{
             color: "#f2c45c",
@@ -1543,9 +1233,6 @@ export default function Hero() {
         >
           Wedding Gift
         </div>
-
-        {}
-
         <div
           style={{
             width: "78%",
@@ -1570,9 +1257,6 @@ export default function Hero() {
           hormat, tanda kasih juga dapat diberikan
           melalui rekening berikut.
         </div>
-
-        {}
-
         <div
           style={{
             width: "80%",
@@ -1582,8 +1266,6 @@ export default function Hero() {
             padding: "18px 15px",
 
             boxSizing: "border-box",
-
-            background: "#ffffff",
 
             borderRadius: "18px",
 
@@ -1601,8 +1283,6 @@ export default function Hero() {
             gap: "22px",
           }}
         >
-          {}
-
           <div
             style={{
               width: "100%",
@@ -1615,8 +1295,6 @@ export default function Hero() {
               boxSizing: "border-box",
             }}
           >
-            {}
-
             <div
               style={{
                 width: "52%",
@@ -1628,7 +1306,8 @@ export default function Hero() {
                 justifyContent: "flex-start",
               }}
             >
-              <img
+              <motion.img
+              {...photoMotion}
                 src={briLogo}
                 alt="BRI Wahyuni"
                 style={{
@@ -1644,9 +1323,6 @@ export default function Hero() {
                 }}
               />
             </div>
-
-            {}
-
             <div
               style={{
                 flex: 1,
@@ -1768,9 +1444,6 @@ export default function Hero() {
               </button>
             </div>
           </div>
-
-          {}
-
           <div
             style={{
               width: "100%",
@@ -1779,9 +1452,6 @@ export default function Hero() {
                 "rgba(176, 0, 58, 0.12)",
             }}
           />
-
-          {}
-
           <div
             style={{
               width: "100%",
@@ -1794,8 +1464,6 @@ export default function Hero() {
               boxSizing: "border-box",
             }}
           >
-            {}
-
             <div
               style={{
                 width: "52%",
@@ -1807,7 +1475,8 @@ export default function Hero() {
                 justifyContent: "flex-start",
               }}
             >
-              <img
+              <motion.img
+              {...photoMotion}
                 src={briArdian}
                 alt="BRI Ardian Syaputra"
                 style={{
@@ -1823,9 +1492,6 @@ export default function Hero() {
                 }}
               />
             </div>
-
-            {}
-
             <div
               style={{
                 flex: 1,
@@ -1948,89 +1614,250 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
-
-      {}
-
-      <div
-        className="scroll-reveal-section"
-        style={{
-          width: "100%",
-
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-
-          boxSizing: "border-box",
-
-          marginTop: "-50px",
-
-          textAlign: "center",
-        }}
-      >
-        {}
-
         <div
           style={{
             width: "100%",
 
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
 
-            color: "#f2c45c",
+            boxSizing: "border-box",
 
-            fontFamily:
-              "Georgia, 'Times New Roman', serif",
-
-            fontSize: "24px",
-
-            fontWeight: 700,
-
-            lineHeight: 1.2,
-
-            margin: 0,
-
-            textAlign: "center",
-
-            textShadow:
-              "0 1px 2px rgba(80, 30, 20, 0.15)",
-          }}
-        >
-          ✦ Terima Kasih ✦
-        </div>
-
-        {}
-
-        <div
-          style={{
-            width: "85%",
-
-            marginTop: "10px",
-
-            color: "#000000",
-
-            fontFamily: "Arial, sans-serif",
-
-            fontSize: "11px",
-
-            fontWeight: 400,
-
-            lineHeight: 1.5,
+            marginTop: "0px",
+            paddingTop: "28px",
+            paddingBottom: "35px",
 
             textAlign: "center",
           }}
         >
-          Diharapkan kehadiran dan doa restu
-          Bapak/Ibu/Saudara/i pada acara
-          pernikahan kami.
+          <div
+            style={{
+              width: "100%",
+
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+
+              color: "#f2c45c",
+
+              fontFamily:
+                "Georgia, 'Times New Roman', serif",
+
+              fontSize: "24px",
+
+              fontWeight: 700,
+
+              lineHeight: 1.2,
+
+              margin: 0,
+
+              textAlign: "center",
+
+              textShadow:
+                "0 1px 2px rgba(80, 30, 20, 0.15)",
+            }}
+          >
+            ✦ Terima Kasih ✦
+          </div>
+          <div
+            style={{
+              width: "85%",
+
+              marginTop: "16px",
+
+              color: "#000000",
+
+              fontFamily: "Arial, sans-serif",
+
+              fontSize: "11px",
+
+              fontWeight: 400,
+
+              lineHeight: 1.5,
+
+              textAlign: "center",
+            }}
+          >
+            Diharapkan kehadiran dan doa restu
+            Bapak/Ibu/Saudara/i pada acara
+            pernikahan kami.
+          </div>
         </div>
-      </div>
+
+      </motion.div>
 
       <div style={{ height: "95px" }} />
 
       <BottomNav />
     </section>
+  );
+}
+
+function GallerySection({
+  id,
+  zIndex,
+  background,
+  photos,
+  light = false,
+}) {
+  return (
+    <motion.div
+      id={id}
+      className="scroll-reveal-section"
+      {...sectionMotion}
+      style={{
+        position: "relative",
+        zIndex,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        boxSizing: "border-box",
+        marginTop: "-40px",
+        paddingTop: "95px",
+        paddingBottom: "80px",
+        textAlign: "center",
+        overflow: "visible",
+        ...(light
+          ? {
+              background: "transparent",
+            }
+          : {
+              backgroundImage: `url(${background})`,
+              backgroundSize: "100% 100%",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }),
+      }}
+    >
+      {light && (
+        <motion.img
+              {...photoMotion}
+          src={background}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "-40px",
+            left: 0,
+            width: "100%",
+            height: "calc(100% + 40px)",
+            display: "block",
+            margin: 0,
+            padding: 0,
+            objectFit: "fill",
+            objectPosition: "center",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxSizing: "border-box",
+        }}
+      >
+        <div
+          style={{
+            color: light ? "#000000" : "#ffffff",
+            fontFamily: "Arial, sans-serif",
+            fontSize: "15px",
+            fontWeight: 400,
+            letterSpacing: "0.28em",
+            lineHeight: 1,
+            marginBottom: "9px",
+          }}
+        >
+          GALLERY
+        </div>
+
+        <div
+          style={{
+            color: light ? "#000000" : "#ffffff",
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "31px",
+            fontWeight: 700,
+            lineHeight: 1.05,
+            marginBottom: "34px",
+            textAlign: "center",
+          }}
+        >
+          Our Moments
+        </div>
+        <div
+          style={{
+            width: "92%",
+            maxWidth: "360px",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            columnGap: "18px",
+            rowGap: "24px",
+            boxSizing: "border-box",
+            marginTop: "5px",
+            padding: 0,
+            background: "transparent",
+            border: "none",
+            boxShadow: "none",
+          }}
+        >
+          {photos.map((photo, index) => (
+            <div
+              key={`${id}-${index}`}
+              style={{
+                width: "100%",
+                overflow: "visible",
+                background: "transparent",
+                border: "none",
+                boxSizing: "border-box",
+                padding: 0,
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <motion.img
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      duration: 0.9,
+                      delay: index * 0.08,
+                      ease: "easeOut",
+                    },
+                  },
+                }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                src={photo}
+                alt={`Gallery ${index + 1}`}
+                loading="lazy"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "contain",
+                  objectPosition: "center",
+                  margin: 0,
+                  padding: 0,
+                  border: "none",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
   );
 }
 

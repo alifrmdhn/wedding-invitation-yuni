@@ -16,13 +16,9 @@ body,
   padding: 0;
 }
 
-html {
-  background: #8d002d;
-}
-
+html,
 body {
-  background: #8d002d;
-  overflow-x: hidden;
+  background: transparent;
 }
 
 #root {

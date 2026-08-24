@@ -14,7 +14,7 @@ const weddingMusic = new URL(
   import.meta.url
 ).href;
 
-const globalBackground = new URL(
+const redBackground = new URL(
   "./assets/bg merah.png",
   import.meta.url
 ).href;
@@ -35,7 +35,7 @@ function App() {
       audioRef.current.volume = 0.65;
       audioRef.current.muted = muted;
 
-      audioRef.current.currentTime = 52;
+      audioRef.current.currentTime = 60;
     }
 
     audioRef.current.play().catch(() => {});
@@ -55,17 +55,17 @@ function App() {
 
   return (
     <div
-      style={{
-        width: "100%",
-        minHeight: "100vh",
-        backgroundColor: "#8d002d",
-        backgroundImage: `url("${globalBackground}")`,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed",
-      }}
-    >
+  style={{
+    width: "100%",
+    minHeight: "100vh",
+
+    backgroundColor: "transparent",
+    backgroundImage: `url(${redBackground})`,
+    backgroundSize: "100% 100%",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  }}
+>
       <FlowerPetals active={showPetals} />
 
       <AnimatePresence mode="wait">
