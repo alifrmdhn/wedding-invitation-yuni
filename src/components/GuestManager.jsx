@@ -185,7 +185,7 @@ export default function GuestManager() {
                 addGuest();
               }
             }}
-            placeholder="Contoh: Muhammad Alif Ramadhan"
+            placeholder="Contoh: Jessica Jane"
             style={{
               flex: 1,
               minWidth: 0,
