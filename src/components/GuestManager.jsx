@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const BASE_URL =
   "https://wedding-invitation-yuni-ardian.vercel.app/";
@@ -24,6 +24,8 @@ Terima kasih atas perhatian dan doa restunya.
 
 Wassalamu’alaikum Warahmatullahi Wabarakatuh.`;
 
+const TOKEN_REGEX = /(\{NAMA\}|\{LINK\})/g;
+
 function createMessage(template, name) {
   const link =
     `${BASE_URL}?to=${encodeURIComponent(name)}`;
@@ -31,6 +33,88 @@ function createMessage(template, name) {
   return template
     .replaceAll("{NAMA}", name)
     .replaceAll("{LINK}", link);
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function templateToHtml(template) {
+  return template
+    .split(TOKEN_REGEX)
+    .map((part) => {
+      if (
+        part === "{NAMA}" ||
+        part === "{LINK}"
+      ) {
+        return `<span
+          data-token="${part}"
+          contenteditable="false"
+          draggable="true"
+          style="
+            display:inline-block;
+            padding:2px 6px;
+            margin:0 2px;
+            border-radius:4px;
+            background:#f1dfe2;
+            color:#5d1721;
+            font-weight:700;
+            cursor:grab;
+            user-select:none;
+          "
+        >${part}</span>`;
+      }
+
+      return escapeHtml(part)
+        .replaceAll("\n", "<br>");
+    })
+    .join("");
+}
+
+function htmlToTemplate(element) {
+  const clone = element.cloneNode(true);
+
+  clone
+    .querySelectorAll("[data-token]")
+    .forEach((token) => {
+      token.replaceWith(
+        document.createTextNode(
+          token.getAttribute("data-token")
+        )
+      );
+    });
+
+  return clone.innerText || "";
+}
+
+function selectionContainsProtectedToken() {
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount === 0) {
+    return false;
+  }
+
+  const range = selection.getRangeAt(0);
+
+  if (range.collapsed) {
+    return false;
+  }
+
+  const tokens = document.querySelectorAll(
+    "[data-token]"
+  );
+
+  return Array.from(tokens).some((token) => {
+    try {
+      return range.intersectsNode(token);
+    } catch {
+      return false;
+    }
+  });
 }
 
 export default function GuestManager() {
@@ -48,10 +132,15 @@ export default function GuestManager() {
   const [savedMessage, setSavedMessage] =
     useState(false);
 
+  const editorRef = useRef(null);
+  const draggedTokenRef = useRef(null);
+
   useEffect(() => {
     try {
       const savedGuests =
-        localStorage.getItem(GUEST_STORAGE_KEY);
+        localStorage.getItem(
+          GUEST_STORAGE_KEY
+        );
 
       if (savedGuests) {
         const parsed = JSON.parse(savedGuests);
@@ -62,7 +151,9 @@ export default function GuestManager() {
       }
 
       const savedMessage =
-        localStorage.getItem(MESSAGE_STORAGE_KEY);
+        localStorage.getItem(
+          MESSAGE_STORAGE_KEY
+        );
 
       if (savedMessage) {
         setMessageTemplate(savedMessage);
@@ -78,6 +169,24 @@ export default function GuestManager() {
       JSON.stringify(guests)
     );
   }, [guests]);
+
+  useEffect(() => {
+    if (
+      showCustomMessage &&
+      editorRef.current
+    ) {
+      editorRef.current.innerHTML =
+        templateToHtml(messageTemplate);
+    }
+  }, [showCustomMessage]);
+
+  const syncEditorToState = () => {
+    if (!editorRef.current) return;
+
+    setMessageTemplate(
+      htmlToTemplate(editorRef.current)
+    );
+  };
 
   const addGuest = () => {
     const cleanName = name.trim();
@@ -115,11 +224,19 @@ export default function GuestManager() {
   };
 
   const saveMessageTemplate = () => {
+    syncEditorToState();
+
+    const currentTemplate =
+      editorRef.current
+        ? htmlToTemplate(editorRef.current)
+        : messageTemplate;
+
     localStorage.setItem(
       MESSAGE_STORAGE_KEY,
-      messageTemplate
+      currentTemplate
     );
 
+    setMessageTemplate(currentTemplate);
     setSavedMessage(true);
 
     setTimeout(() => {
@@ -129,10 +246,16 @@ export default function GuestManager() {
 
   const resetMessageTemplate = () => {
     setMessageTemplate(DEFAULT_MESSAGE);
+
     localStorage.setItem(
       MESSAGE_STORAGE_KEY,
       DEFAULT_MESSAGE
     );
+
+    if (editorRef.current) {
+      editorRef.current.innerHTML =
+        templateToHtml(DEFAULT_MESSAGE);
+    }
   };
 
   const copyMessage = async (
@@ -168,6 +291,117 @@ export default function GuestManager() {
     messageTemplate,
     previewName
   );
+
+  const handleEditorKeyDown = (event) => {
+    if (
+      (event.key === "Backspace" ||
+        event.key === "Delete") &&
+      selectionContainsProtectedToken()
+    ) {
+      event.preventDefault();
+    }
+  };
+
+  const handleEditorBeforeInput = (event) => {
+    if (
+      selectionContainsProtectedToken()
+    ) {
+      event.preventDefault();
+    }
+  };
+
+  const handleTokenDragStart = (event) => {
+    const token =
+      event.currentTarget.dataset.token;
+
+    draggedTokenRef.current = token;
+
+    event.dataTransfer.effectAllowed =
+      "move";
+
+    event.dataTransfer.setData(
+      "text/plain",
+      token
+    );
+  };
+
+  const handleEditorDragOver = (event) => {
+    if (draggedTokenRef.current) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    }
+  };
+
+  const handleEditorDrop = (event) => {
+    const token = draggedTokenRef.current;
+
+    if (!token || !editorRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const range =
+      document.caretRangeFromPoint
+        ? document.caretRangeFromPoint(
+            event.clientX,
+            event.clientY
+          )
+        : null;
+
+    if (!range) {
+      draggedTokenRef.current = null;
+      return;
+    }
+
+    const target =
+      range.startContainer.nodeType === 3
+        ? range.startContainer.parentElement
+        : range.startContainer;
+
+    if (
+      target?.closest?.("[data-token]")
+    ) {
+      draggedTokenRef.current = null;
+      return;
+    }
+
+    const tokenElement =
+      editorRef.current.querySelector(
+        `[data-token="${token}"]`
+      );
+
+    if (!tokenElement) {
+      draggedTokenRef.current = null;
+      return;
+    }
+
+    range.deleteContents();
+
+    const newToken =
+      tokenElement.cloneNode(true);
+
+    range.insertNode(newToken);
+
+    tokenElement.remove();
+
+    const selection =
+      window.getSelection();
+
+    selection.removeAllRanges();
+
+    const after =
+      document.createRange();
+
+    after.setStartAfter(newToken);
+    after.collapse(true);
+
+    selection.addRange(after);
+
+    syncEditorToState();
+
+    draggedTokenRef.current = null;
+  };
 
   return (
     <div
@@ -217,8 +451,6 @@ export default function GuestManager() {
           </p>
         </div>
 
-        {/* CUSTOM GLOBAL MESSAGE BUTTON */}
-
         <button
           type="button"
           onClick={() =>
@@ -239,8 +471,6 @@ export default function GuestManager() {
         >
           ✎ Custom Kata-kata Undangan
         </button>
-
-        {/* CUSTOM GLOBAL MESSAGE MODAL */}
 
         {showCustomMessage && (
           <div
@@ -326,38 +556,73 @@ export default function GuestManager() {
                   lineHeight: 1.5,
                 }}
               >
-                Pengaturan ini berlaku untuk
-                <b> semua tamu</b>. Gunakan
-                <b> {"{NAMA}"}</b> untuk nama
-                tamu dan <b>{"{LINK}"}</b> untuk
-                link personal.
+                <b>{"{NAMA}"}</b> dan{" "}
+                <b>{"{LINK}"}</b> adalah bagian
+                otomatis. Keduanya tidak bisa
+                dihapus atau diedit, tetapi bisa
+                <b> digeser</b> ke posisi lain.
               </p>
 
-              <textarea
-                value={messageTemplate}
-                onChange={(event) =>
-                  setMessageTemplate(
-                    event.target.value
-                  )
+              <div
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                onInput={syncEditorToState}
+                onKeyDown={handleEditorKeyDown}
+                onBeforeInput={
+                  handleEditorBeforeInput
                 }
-                rows={14}
+                onDragStart={(event) => {
+                  if (
+                    event.target.matches?.(
+                      "[data-token]"
+                    )
+                  ) {
+                    handleTokenDragStart(event);
+                  }
+                }}
+                onDragOver={handleEditorDragOver}
+                onDrop={handleEditorDrop}
                 style={{
                   width: "100%",
+                  minHeight: "280px",
+                  maxHeight: "420px",
+                  overflowY: "auto",
                   boxSizing: "border-box",
                   padding: "13px",
                   border:
                     "1px solid #d8c4c7",
                   borderRadius: "7px",
                   outline: "none",
-                  resize: "vertical",
                   background: "#fffdfd",
                   color: "#2b1a1d",
                   fontFamily:
                     "Arial, sans-serif",
                   fontSize: "13px",
                   lineHeight: 1.6,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
                 }}
               />
+
+              <div
+                style={{
+                  marginTop: "10px",
+                  padding: "10px 12px",
+                  borderRadius: "6px",
+                  background: "#f8f4f4",
+                  color: "#725b60",
+                  fontSize: "11px",
+                  lineHeight: 1.5,
+                }}
+              >
+                💡 <b>{"{NAMA}"}</b> = nama
+                tamu &nbsp; • &nbsp;
+                <b>{"{LINK}"}</b> = link undangan.
+                <br />
+                Keduanya bisa diseret untuk
+                mengubah posisi.
+              </div>
 
               <div
                 style={{
@@ -442,8 +707,6 @@ export default function GuestManager() {
             </div>
           </div>
         )}
-
-        {/* INPUT GUEST */}
 
         <div
           style={{
